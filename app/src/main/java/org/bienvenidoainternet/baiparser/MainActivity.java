@@ -219,7 +219,8 @@ public class MainActivity extends AppCompatActivity
 
         // TODO: Aplicar tema al navigator
 //        navigationView.setBackgroundColor(themeManager.getPrimaryDarkColor());
-        checkForUpdates();
+        // TODO: Arreglar el servidor
+//        checkForUpdates();
     }
 
     @Override
@@ -293,8 +294,9 @@ public class MainActivity extends AppCompatActivity
                 }
                 break;
             case R.id.action_update:
-                Intent updater = new Intent(getApplicationContext(), UpdaterActivity.class);
-                startActivity(updater);
+                Toast.makeText(getApplicationContext(), "nope", Toast.LENGTH_SHORT).show();
+//                Intent updater = new Intent(getApplicationContext(), UpdaterActivity.class);
+//                startActivity(updater);
         }
         return super.onOptionsItemSelected(item);
     }

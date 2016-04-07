@@ -23,8 +23,8 @@
         android:title="@string/action_settings"
         app:showAsAction="never" />
     <item
-        android:title="Buscar actualizaciones"
-        android:id="@+id/action_update"
+        android:title="Acerca de ..."
+        android:id="@+id/action_about"
         android:orderInCategory="500"
         app:showAsAction="never"/>
     <item

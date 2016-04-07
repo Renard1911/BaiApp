@@ -40,26 +40,6 @@ public class ViewerActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-//        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
-//        int themeId = Integer.valueOf(settings.getString("setting_theme", "1")), currentThemeId = R.style.AppTheme;
-//        switch (themeId) {
-//            case 1:
-//                currentThemeId = R.style.AppTheme_NoActionBar;
-//                break;
-//            case 2:
-//                currentThemeId = R.style.AppTheme_Dark;
-//                break;
-//            case 3:
-//                currentThemeId = R.style.AppTheme_HeadLine;
-//                break;
-//            case 4:
-//                currentThemeId = R.style.AppTheme_Black;
-//                break;
-//        }
-//        setTheme(currentThemeId);
-
-
         if (savedInstanceState != null){
             bi = savedInstanceState.getParcelable("boardItem");
         }
@@ -70,8 +50,6 @@ public class ViewerActivity extends AppCompatActivity {
         imageView = (SubsamplingScaleImageView)findViewById(R.id.imageView);
         gifView = (GifImageView) findViewById(R.id.gifView);
         setTitle(bi.getFile());
-//        imageView.setOnClickListener(new View.OnClickListener() {
-//        new TaskDownloadFile().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
         downloadFile();
         this.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }

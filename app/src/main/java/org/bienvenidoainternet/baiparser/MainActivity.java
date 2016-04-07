@@ -217,10 +217,8 @@ public class MainActivity extends AppCompatActivity
             refreshNavigator();
         }
 
-        // TODO: Aplicar tema al navigator
-//        navigationView.setBackgroundColor(themeManager.getPrimaryDarkColor());
-        // TODO: Arreglar el servidor
-//        checkForUpdates();
+        //TODO: Aplicar tema al navigator
+        //navigationView.setBackgroundColor(themeManager.getPrimaryDarkColor());
     }
 
     @Override
@@ -293,10 +291,9 @@ public class MainActivity extends AppCompatActivity
                     childFragment.scrollToTop();
                 }
                 break;
-            case R.id.action_update:
-                Toast.makeText(getApplicationContext(), "nope", Toast.LENGTH_SHORT).show();
-//                Intent updater = new Intent(getApplicationContext(), UpdaterActivity.class);
-//                startActivity(updater);
+            case R.id.action_about:
+                startActivity(new Intent(getApplicationContext(), LicensesActivity.class));
+                break;
         }
         return super.onOptionsItemSelected(item);
     }
@@ -440,41 +437,5 @@ public class MainActivity extends AppCompatActivity
             rnd = rnd + b;
         }
         return rnd;
-    }
-
-    public void checkForUpdates(){
-        Ion.with(getApplicationContext())
-                .load("http://ahri.xyz/bai/version.php")
-                .asString()
-                .setCallback(new FutureCallback<String>() {
-                    @Override
-                    public void onCompleted(Exception e, String result) {
-                        if (e != null){
-                            e.printStackTrace();
-                        }else{
-                            try {
-                                JSONObject version = new JSONObject(result);
-                                float lastVersion = (float) version.getDouble("version");
-                                if (CURRENT_VERSION == lastVersion){
-                                    Log.v("Updater", "Up to date");
-                                }else{
-                                    Log.v("Updater", "New version available : " + lastVersion);
-                                    Snackbar.make(getCurrentFocus(), "Nueva versión disponible", Snackbar.LENGTH_LONG)
-                                            .setAction("Actualizar", new View.OnClickListener() {
-                                                @Override
-                                                public void onClick(View v) {
-                                                    Intent updater = new Intent(getApplicationContext(), UpdaterActivity.class);
-                                                    startActivity(updater);
-                                                }
-                                            })
-                                            .setActionTextColor(Color.rgb(255,127,0))
-                                            .show();
-                                }
-                            } catch (JSONException e1) {
-                                e1.printStackTrace();
-                            }
-                        }
-                    }
-                });
     }
 }

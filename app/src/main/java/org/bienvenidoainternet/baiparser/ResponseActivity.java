@@ -2,11 +2,15 @@ package org.bienvenidoainternet.baiparser;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -27,12 +31,6 @@ import java.io.File;
 
 import utils.ContentProviderUtils;
 
-//import org.apache.http.HttpEntity;
-//import org.apache.http.entity.ContentType;
-//import org.apache.http.entity.mime.HttpMultipartMode;
-//import org.apache.http.entity.mime.MultipartEntityBuilder;
-//import org.apache.http.entity.mime.content.FileBody;
-//import org.apache.http.entity.mime.content.StringBody;
 
 public class ResponseActivity extends AppCompatActivity {
 
@@ -67,17 +65,6 @@ public class ResponseActivity extends AppCompatActivity {
         LinearLayout layoutProcess = (LinearLayout)findViewById(R.id.layoutPostProcess);
         layoutProcess.setVisibility(View.GONE);
         filePath = (EditText) findViewById(R.id.txtFilePath);
-        Button send = (Button)findViewById(R.id.btnSend);
-        send.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                TextView txtName = (TextView) findViewById(R.id.txtPosterName);
-                TextView txtEmail = (TextView) findViewById(R.id.txtEmail);
-                TextView txtMessage = (TextView) findViewById(R.id.txtResponse);
-                makePost(txtName.getText().toString(), txtEmail.getText().toString(), txtMessage.getText().toString());
-
-            }
-        });
 
         Button bBold = (Button) findViewById(R.id.buttonBold);
         bBold.setOnClickListener(new View.OnClickListener() {
@@ -124,6 +111,23 @@ public class ResponseActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_replyform, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.action_form_reply){
+            TextView txtName = (TextView) findViewById(R.id.txtPosterName);
+            TextView txtEmail = (TextView) findViewById(R.id.txtEmail);
+            TextView txtMessage = (TextView) findViewById(R.id.txtResponse);
+            makePost(txtName.getText().toString(), txtEmail.getText().toString(), txtMessage.getText().toString());
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override

@@ -417,10 +417,10 @@ public class MainActivity extends AppCompatActivity
             }
         }
     }
+    
     /*
             Crea una secuencia de caracteres de 8 digitos aleatorios (incluye mayusculas, minisculas y numeros).
     */
-
     public String makePassword(){
         Random r = new Random();
         String rnd = "";

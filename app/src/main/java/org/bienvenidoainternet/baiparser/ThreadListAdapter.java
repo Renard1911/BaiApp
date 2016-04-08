@@ -220,7 +220,9 @@ public class ThreadListAdapter extends ArrayAdapter<BoardItem>{
 
         // Trasnparentar items con sage
         if (convertView != null){
-            convertView.setAlpha(boardItem.isSage() ? 0.75F : 1.0F);
+            if (settings.getBoolean("pref_transparent_sage", true)){
+                convertView.setAlpha(boardItem.isSage() ? 0.75F : 1.0F);
+            }
         }
 
         /*

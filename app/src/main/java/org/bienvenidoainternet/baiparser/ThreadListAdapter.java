@@ -1,12 +1,8 @@
 package org.bienvenidoainternet.baiparser;
 
-import android.animation.ArgbEvaluator;
-import android.animation.ObjectAnimator;
-import android.animation.ValueAnimator;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
@@ -28,6 +24,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import org.bienvenidoainternet.baiparser.structure.BoardItem;
+import org.bienvenidoainternet.baiparser.structure.BoardItemFile;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -36,7 +33,6 @@ import java.util.EnumSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -47,12 +43,18 @@ public class ThreadListAdapter extends ArrayAdapter<BoardItem>{
     private ThemeManager tm;
     Typeface monaFont;
     public boolean listThreads = false;
+    private ArrayList<BoardItem> boardItems = new ArrayList<BoardItem>();
+    private static final String EXTRA_FILELIST = "fileList";
 
     public ThreadListAdapter(Context context, List<BoardItem> objects, ThemeManager tm) {
         super(context, 0, objects);
         this.context = context;
         this.tm = tm;
         monaFont = Typeface.createFromAsset(context.getAssets(), "fonts/mona.ttf");
+    }
+
+    public void updateBoardItems(ArrayList<BoardItem> boardItems){
+        this.boardItems = boardItems;
     }
 
     private String intToHexString(int i){
@@ -73,7 +75,7 @@ public class ThreadListAdapter extends ArrayAdapter<BoardItem>{
         return result;
     }
     @Override
-    public View getView(int position, final View convertView, final ViewGroup parent){
+    public View getView(final int position, final View convertView, final ViewGroup parent){
         LayoutInflater inflater = (LayoutInflater)getContext()
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View listItemView = convertView;
@@ -120,7 +122,18 @@ public class ThreadListAdapter extends ArrayAdapter<BoardItem>{
                     }else {
                         Intent in = new Intent(convertView.getContext(), ViewerActivity.class);
                         Bundle b = new Bundle();
-                        b.putParcelable("boardItem", boardItem);
+                        ArrayList<BoardItemFile> fileList =  new ArrayList<BoardItemFile>();
+                        int relativePosition = 0;
+                        for (int i = 0; i < boardItems.size(); i++){
+                            if (!boardItems.get(i).getFile().isEmpty()){
+                                if (boardItems.get(i).getFile().equals(boardItem.getFile())){
+                                    relativePosition = fileList.size();
+                                }
+                                fileList.add(new BoardItemFile("http://bienvenidoainternet.org/" + boardItems.get(i).getParentBoard().getBoardDir() + "/src/" + boardItems.get(i).getFile(), boardItems.get(i).getFile(), boardItems.get(i).getParentBoard().getBoardDir()));
+                            }
+                        }
+                        b.putParcelableArrayList(EXTRA_FILELIST, fileList);
+                        b.putInt("position", relativePosition);
                         in.putExtras(b);
                         convertView.getContext().startActivity(in);
                     }

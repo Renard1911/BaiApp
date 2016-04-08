@@ -55,7 +55,7 @@ import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.List;
 
-public class fragmentThreadList extends Fragment {
+public class FragmentBoardItemList extends Fragment {
     public static final String ARG_CURRENTBOARD = "currentBoard", ARG_THREAD_ID = "currentThreadId", ARG_MAIN_FRAGMENT = "imMainFragment",
             SAVED_BOARDITEMS = "savedBoardItems", RECENT_POST_MODE = "recentpostmode", ARG_CURRENT_THREAD = "currentThread";
     List<ReplyID> idList = new ArrayList<>();
@@ -80,13 +80,13 @@ public class fragmentThreadList extends Fragment {
     LinearLayout layoutThreadProcess;
     TextView txtThreadProcess;
 
-    public fragmentThreadList() {
+    public FragmentBoardItemList() {
         // Required empty public constructor
 
     }
 
-    public static fragmentThreadList newInstance(boolean mainFragment, Board board, BoardItem thread){
-        fragmentThreadList fragment = new fragmentThreadList();
+    public static FragmentBoardItemList newInstance(boolean mainFragment, Board board, BoardItem thread){
+        FragmentBoardItemList fragment = new FragmentBoardItemList();
         Bundle args = new Bundle();
         args.putParcelable(ARG_CURRENTBOARD, board);
         args.putParcelable(ARG_CURRENT_THREAD, thread);
@@ -517,6 +517,7 @@ public class fragmentThreadList extends Fragment {
                             }
                         }
                         listViewAdapter.notifyDataSetChanged();
+                        listViewAdapter.updateBoardItems(boardItems);
                         loadingMoreThreads = false;
                         if (boardItems.isEmpty()){
                             mListener.updateToolbar(currentBoard, currentThread);
@@ -610,6 +611,7 @@ public class fragmentThreadList extends Fragment {
                             }
                         }
                         listViewAdapter.notifyDataSetChanged();
+                        listViewAdapter.updateBoardItems(boardItems);
                         if (settings.getBoolean("setting_scrollatnewthread", true)){
                             listViewBoardItems.setSelection(boardItems.size());
                             mListener.showActionButton();

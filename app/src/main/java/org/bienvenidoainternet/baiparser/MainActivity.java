@@ -3,13 +3,11 @@ package org.bienvenidoainternet.baiparser;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
-import android.support.design.widget.Snackbar;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
@@ -39,21 +37,18 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.Random;
 
-import layout.fragmentThreadList;
+import layout.FragmentBoardItemList;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, fragmentThreadList.OnFragmentInteractionListener {
-
-    public static final float CURRENT_VERSION = 1.5F;
+        implements NavigationView.OnNavigationItemSelectedListener, FragmentBoardItemList.OnFragmentInteractionListener {
     private ViewPager pager; // variable del ViewPager
     CustomFragmentPagerAdapter pagerAdapter; // Adaptador del ViewPager
     NavigationView navigationView;
     DrawerLayout drawer;
     FloatingActionButton fab;
     public ThemeManager themeManager;
-    fragmentThreadList childFragment; // Segunda página del ViewPager, se muestra un solo hilo (selecionado del catálogo)
-    fragmentThreadList mainFragment; // Primera página del ViewPager, se muestra una lista de hilos. (catálogo)
-//    fragmentThreadList recentFragment;
+    FragmentBoardItemList childFragment; // Segunda página del ViewPager, se muestra un solo hilo (selecionado del catálogo)
+    FragmentBoardItemList mainFragment; // Primera página del ViewPager, se muestra una lista de hilos. (catálogo)
     Toolbar toolbar = null;
     public int currentThemeId = 0, themeId = 0; // Id del recurso, Id del tema
     public ArrayList<Board> boardList = new ArrayList<>();
@@ -155,20 +150,17 @@ public class MainActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
         if (savedInstanceState != null) {
-            mainFragment = (fragmentThreadList) getSupportFragmentManager().getFragment(savedInstanceState, "mainFragment");
-            childFragment = (fragmentThreadList) getSupportFragmentManager().getFragment(savedInstanceState, "childFragment");
-//            recentFragment = (fragmentThreadList) getSupportFragmentManager().getFragment(savedInstanceState, "recentFragment");
+            mainFragment = (FragmentBoardItemList) getSupportFragmentManager().getFragment(savedInstanceState, "mainFragment");
+            childFragment = (FragmentBoardItemList) getSupportFragmentManager().getFragment(savedInstanceState, "childFragment");
         } else {
-            mainFragment = fragmentThreadList.newInstance(true, null, null);
-            childFragment = fragmentThreadList.newInstance(false, null, null);
-//            recentFragment = fragmentThreadList.newInstance(false, null, -1);
+            mainFragment = FragmentBoardItemList.newInstance(true, null, null);
+            childFragment = FragmentBoardItemList.newInstance(false, null, null);
         }
 
         this.pager = (ViewPager) findViewById(R.id.pager);
         this.pagerAdapter = new CustomFragmentPagerAdapter(getSupportFragmentManager());
         pagerAdapter.addFragment(mainFragment);
         pagerAdapter.addFragment(childFragment);
-//        pagerAdapter.addFragment(recentFragment);
         this.pager.setAdapter(pagerAdapter);
 
         pager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {

@@ -49,6 +49,10 @@
             android:entries="@array/pref_lastreplies_desc"
             android:entryValues="@array/pref_lastreplies_values"
             android:defaultValue="30"/>
+        <SwitchPreference
+            android:title="Transparentar sages"
+            android:key="pref_transparent_sage"
+            android:defaultValue="true"/>
     </PreferenceCategory>
     <PreferenceCategory
         android:title="Formulario de respuesta">

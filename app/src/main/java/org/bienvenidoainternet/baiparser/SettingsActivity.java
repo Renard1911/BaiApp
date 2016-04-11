@@ -95,6 +95,8 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        ThemeManager tm = new ThemeManager(this);
+        this.setTheme(tm.getThemeForActivity());
         setupActionBar();
         getFragmentManager().beginTransaction().replace(android.R.id.content, new GeneralPreferenceFragment()).commit();
     }

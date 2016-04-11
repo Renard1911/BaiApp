@@ -3,13 +3,11 @@ package org.bienvenidoainternet.baiparser;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
-import android.support.design.widget.Snackbar;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
@@ -33,27 +31,25 @@ import com.koushikdutta.ion.Ion;
 
 import org.bienvenidoainternet.baiparser.structure.Board;
 import org.bienvenidoainternet.baiparser.structure.BoardItem;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Random;
 
-import layout.fragmentThreadList;
+import layout.FragmentBoardItemList;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, fragmentThreadList.OnFragmentInteractionListener {
-
-    public static final float CURRENT_VERSION = 1.5F;
+        implements NavigationView.OnNavigationItemSelectedListener, FragmentBoardItemList.OnFragmentInteractionListener {
     private ViewPager pager; // variable del ViewPager
     CustomFragmentPagerAdapter pagerAdapter; // Adaptador del ViewPager
     NavigationView navigationView;
     DrawerLayout drawer;
     FloatingActionButton fab;
     public ThemeManager themeManager;
-    fragmentThreadList childFragment; // Segunda página del ViewPager, se muestra un solo hilo (selecionado del catálogo)
-    fragmentThreadList mainFragment; // Primera página del ViewPager, se muestra una lista de hilos. (catálogo)
-//    fragmentThreadList recentFragment;
+    FragmentBoardItemList childFragment; // Segunda página del ViewPager, se muestra un solo hilo (selecionado del catálogo)
+    FragmentBoardItemList mainFragment; // Primera página del ViewPager, se muestra una lista de hilos. (catálogo)
     Toolbar toolbar = null;
     public int currentThemeId = 0, themeId = 0; // Id del recurso, Id del tema
     public ArrayList<Board> boardList = new ArrayList<>();
@@ -83,45 +79,24 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        ThemeManager tm = new ThemeManager(this);
+        this.setTheme(tm.getThemeForMainActivity());
 
         if (savedInstanceState != null) {
             currentThemeId = savedInstanceState.getInt("currentThemeId");
             boardList = savedInstanceState.getParcelableArrayList("boardList");
         }
         SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
-        themeId = Integer.valueOf(settings.getString("pref_theme", "1"));
-
         if (settings.getString("pref_password", "").isEmpty()){
             SharedPreferences.Editor edit = settings.edit();
             edit.putString("pref_password", makePassword());
             edit.commit();
         }
 
-        switch (themeId) {
-            case 1:
-                currentThemeId = R.style.AppTheme_NoActionBar;
-                break;
-            case 2:
-                currentThemeId = R.style.AppTheme_Dark;
-                break;
-            case 3:
-                currentThemeId = R.style.AppTheme_HeadLine;
-                setTheme(R.style.AppTheme_HeadLine_Activity);
-                break;
-            case 4:
-                currentThemeId = R.style.AppTheme_Black;
-                setTheme(R.style.AppTheme_Black_Activity);
-                break;
-        }
-
-        themeManager = new ThemeManager(this);
-        Log.d("ThemeManager", "isDarkTheme: " + themeManager.isDarkTheme());
-
         setContentView(R.layout.activity_main);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setTitle("Bievenido a internet");
         this.setSupportActionBar(toolbar);
-
 
         fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -155,20 +130,17 @@ public class MainActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
         if (savedInstanceState != null) {
-            mainFragment = (fragmentThreadList) getSupportFragmentManager().getFragment(savedInstanceState, "mainFragment");
-            childFragment = (fragmentThreadList) getSupportFragmentManager().getFragment(savedInstanceState, "childFragment");
-//            recentFragment = (fragmentThreadList) getSupportFragmentManager().getFragment(savedInstanceState, "recentFragment");
+            mainFragment = (FragmentBoardItemList) getSupportFragmentManager().getFragment(savedInstanceState, "mainFragment");
+            childFragment = (FragmentBoardItemList) getSupportFragmentManager().getFragment(savedInstanceState, "childFragment");
         } else {
-            mainFragment = fragmentThreadList.newInstance(true, null, null);
-            childFragment = fragmentThreadList.newInstance(false, null, null);
-//            recentFragment = fragmentThreadList.newInstance(false, null, -1);
+            mainFragment = FragmentBoardItemList.newInstance(true, null, null);
+            childFragment = FragmentBoardItemList.newInstance(false, null, null);
         }
 
         this.pager = (ViewPager) findViewById(R.id.pager);
         this.pagerAdapter = new CustomFragmentPagerAdapter(getSupportFragmentManager());
         pagerAdapter.addFragment(mainFragment);
         pagerAdapter.addFragment(childFragment);
-//        pagerAdapter.addFragment(recentFragment);
         this.pager.setAdapter(pagerAdapter);
 
         pager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
@@ -380,25 +352,25 @@ public class MainActivity extends AppCompatActivity
         final SubMenu sub = menu.addSubMenu("Lista de Boards");
         Ion.with(getApplicationContext())
                 .load("http://bienvenidoainternet.org/cgi/api/boards")
-                .asJsonObject()
-                .setCallback(new FutureCallback<JsonObject>() {
+                .asString()
+                .setCallback(new FutureCallback<String>() {
                     @Override
-                    public void onCompleted(Exception e, JsonObject result) {
+                    public void onCompleted(Exception e, String result) {
                         if (e != null) {
                             e.printStackTrace();
                             Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_LONG).show();
-                        } else {
-                            JsonArray boards = result.get("boards").getAsJsonArray();
-                            for (int i = 0; i < boards.size(); i++) {
-                                try {
-                                    JSONObject board = new JSONObject(boards.get(i).toString());
+                        }else {
+                            try {
+                                JSONArray boards = new JSONObject(result).getJSONArray("boards");
+                                for (int i = 0; i < boards.length(); i++) {
+                                    JSONObject board = boards.getJSONObject(i);
                                     Board parsedBoard = new Board(board.getString("name"), board.getString("dir"), board.getInt("board_type"));
                                     sub.add(parsedBoard.getBoardName());
                                     boardList.add(parsedBoard);
-                                } catch (JSONException e1) {
-                                    e1.printStackTrace();
-                                    Toast.makeText(getApplicationContext(), "Error parsing JSON", Toast.LENGTH_LONG).show();
                                 }
+                            }catch (JSONException e1) {
+                                Toast.makeText(getApplicationContext(), e1.getMessage(), Toast.LENGTH_LONG).show();
+                                e1.printStackTrace();
                             }
                         }
                     }

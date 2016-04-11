@@ -31,7 +31,12 @@
         <item name="isDarkTheme">true</item>
     </style>
 
-    <style name="AppTheme.HeadLine.Activity" parent="AppTheme.NoActionBar">
+    <style name="AppTheme.HeadLineActionBar.NoActionBar" parent="AppTheme.HeadLineActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="AppTheme.HeadLineActionBar">
         <item name="colorPrimary">@color/headlineTextColor</item>
         <item name="colorPrimaryDark">@color/blackBackground</item>
         <item name="colorAccent">@color/headlineLinkColor</item>
@@ -53,7 +58,12 @@
         <item name="isDarkTheme">false</item>
     </style>
 
-    <style name="AppTheme.Black.Activity" parent="AppTheme.NoActionBar">
+    <style name="AppTheme.BlackActionBar.NoActionBar" parent="AppTheme.BlackActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="AppTheme.BlackActionBar">
         <item name="colorPrimary">@color/blackBackground</item>
         <item name="colorPrimaryDark">@color/blackMarginColor</item>
         <item name="colorAccent">@color/blackMarginColor</item>

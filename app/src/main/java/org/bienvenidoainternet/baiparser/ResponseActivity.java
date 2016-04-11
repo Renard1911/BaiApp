@@ -2,12 +2,10 @@ package org.bienvenidoainternet.baiparser;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -45,10 +43,12 @@ public class ResponseActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        ThemeManager tm = new ThemeManager(this);
+        this.setTheme(tm.getThemeForActivity());
         setContentView(R.layout.activity_response);
+        getSupportActionBar().setTitle("Respondiendo");
         settings = PreferenceManager.getDefaultSharedPreferences(this);
         password = settings.getString("pref_password", "12345678");
-        Log.v("password", password);
 
         if (savedInstanceState != null){
             this.theReply = savedInstanceState.getParcelable("theReply");

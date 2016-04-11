@@ -38,6 +38,7 @@ import org.bienvenidoainternet.baiparser.MainActivity;
 import org.bienvenidoainternet.baiparser.R;
 import org.bienvenidoainternet.baiparser.RecentPostAdapter;
 import org.bienvenidoainternet.baiparser.ResponseActivity;
+import org.bienvenidoainternet.baiparser.ThemeManager;
 import org.bienvenidoainternet.baiparser.ThreadListAdapter;
 import org.bienvenidoainternet.baiparser.structure.Board;
 import org.bienvenidoainternet.baiparser.structure.BoardItem;
@@ -80,6 +81,8 @@ public class FragmentBoardItemList extends Fragment {
     LinearLayout layoutThreadProcess;
     TextView txtThreadProcess;
 
+    ThemeManager tm;
+
     public FragmentBoardItemList() {
         // Required empty public constructor
 
@@ -104,6 +107,7 @@ public class FragmentBoardItemList extends Fragment {
             this.currentThread = getArguments().getParcelable(ARG_CURRENT_THREAD);
             this.imMainFragment = getArguments().getBoolean(ARG_MAIN_FRAGMENT);
         }
+        tm = new ThemeManager(getActivity());
     }
 
     @Override
@@ -130,7 +134,7 @@ public class FragmentBoardItemList extends Fragment {
 
         // Aplicación del Tema
         settings = PreferenceManager.getDefaultSharedPreferences(this.getContext());
-        int themeResId = ((MainActivity)getActivity()).getCurrentThemeId();
+        int themeResId = tm.getCurrentThemeId();
         Context context = new ContextThemeWrapper(getActivity(), themeResId);
         LayoutInflater localInflater = inflater.cloneInContext(context);
         View v = localInflater.inflate(R.layout.fragment_fragment_thread_list, container, false);
@@ -145,14 +149,14 @@ public class FragmentBoardItemList extends Fragment {
         this.loadingBar = (ProgressBar)rootView.findViewById(R.id.progressBar);
 
         // Agregamos color al divider del listview
-        ColorDrawable cd = new ColorDrawable((((MainActivity) getActivity()).themeManager).getMarginColor());
+        ColorDrawable cd = new ColorDrawable(tm.getMarginColor());
         listViewBoardItems.setDivider(cd);
         listViewBoardItems.setDividerHeight(1);
 
         // registramos los menus del listview
         registerForContextMenu(listViewBoardItems);
         // Creamos los dos adaptadores y los seteamos dependiendo del modo del fragmento
-        listViewAdapter = new ThreadListAdapter(v.getContext(), boardItems, (((MainActivity) getActivity()).themeManager));
+        listViewAdapter = new ThreadListAdapter(v.getContext(), boardItems, tm);
         recentPostAdapter = new RecentPostAdapter(v.getContext(), boardItems);
         if (recentPostMode){
             listViewBoardItems.setAdapter(recentPostAdapter);

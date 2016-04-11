@@ -2,6 +2,7 @@ package layout;
 
 import android.content.Context;
 import android.content.ContextWrapper;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -9,8 +10,9 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ProgressBar;
-import android.widget.TextView;
+import android.widget.RelativeLayout;
 
 import com.davemorrissey.labs.subscaleview.ImageSource;
 import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView;
@@ -19,7 +21,6 @@ import com.koushikdutta.ion.Ion;
 
 import org.bienvenidoainternet.baiparser.R;
 import org.bienvenidoainternet.baiparser.ViewerActivity;
-import org.bienvenidoainternet.baiparser.structure.BoardItem;
 import org.bienvenidoainternet.baiparser.structure.BoardItemFile;
 
 import java.io.File;
@@ -80,11 +81,24 @@ public class FragmentImage extends Fragment {
         gifView = (GifImageView) view.findViewById(R.id.gifView);
         imageView.setVisibility(View.GONE);
         gifView.setVisibility(View.GONE);
+        RelativeLayout layoutOpenBrowser = (RelativeLayout) view.findViewById(R.id.layoutOpenBrowser);
         if (boardItemFile.file != null) {
             if (!boardItemFile.file.endsWith(".webm") && !boardItemFile.file.endsWith(".swf")) {
+                layoutOpenBrowser.setVisibility(View.GONE);
                 downloadFile();
+            }else{
+                layoutOpenBrowser.setVisibility(View.VISIBLE);
             }
         }
+        Button btnOpenBrowser = (Button) view.findViewById(R.id.btnLaunchBrowser);
+        btnOpenBrowser.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent in = new Intent(Intent.ACTION_VIEW, Uri.parse(boardItemFile.fileURL));
+                in.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                v.getContext().startActivity(in);
+            }
+        });
         return view;
     }
 

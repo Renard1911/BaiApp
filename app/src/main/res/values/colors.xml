@@ -14,8 +14,8 @@
     <color name="nightMarginColor">#58636c</color> <!-- 3 58636c-->
     <color name="nightTextColor">#979ea3</color> <!-- 6 -->
     <color name="nightLinkColor">#c0c4c8</color> <!-- 8 -->
-    <color name="nightNameColor">#2e5f96</color>
-    <color name="nightSageColor">#5f962e</color>
+    <color name="nightNameColor">#5f962e</color>
+    <color name="nightSageColor">#2e5f96</color>
     <color name="nightTripcodeColor">#962e5f</color>
 
     <color name="headlineBackground">#DDDDDD</color> <!-- 1 -->

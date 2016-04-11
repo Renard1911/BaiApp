@@ -14,9 +14,6 @@ import android.view.MenuItem;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
-import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView;
-
-import org.bienvenidoainternet.baiparser.structure.BoardItem;
 import org.bienvenidoainternet.baiparser.structure.BoardItemFile;
 
 import java.io.File;
@@ -27,7 +24,6 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 
 import layout.FragmentImage;
-import pl.droidsonroids.gif.GifImageView;
 
 public class ViewerActivity extends AppCompatActivity implements FragmentImage.OnFragmentInteractionListener {
     private static final String EXTRA_FILELIST = "fileList", EXTRA_RELATIVEPOSITION = "position";
@@ -54,7 +50,6 @@ public class ViewerActivity extends AppCompatActivity implements FragmentImage.O
             pagerAdapter.addFragment(FragmentImage.newInstance(fileList.get(i)));
         }
         imagePager.setAdapter(pagerAdapter);
-        imagePager.setCurrentItem(relativePosition);
         imagePager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
@@ -63,7 +58,7 @@ public class ViewerActivity extends AppCompatActivity implements FragmentImage.O
 
             @Override
             public void onPageSelected(int position) {
-                getSupportActionBar().setSubtitle(fileList.get(position).file);
+                getSupportActionBar().setSubtitle("(" + (position + 1) + " / " + fileList.size() + ") " + fileList.get(position).file);
             }
 
             @Override
@@ -71,6 +66,7 @@ public class ViewerActivity extends AppCompatActivity implements FragmentImage.O
 
             }
         });
+        imagePager.setCurrentItem(relativePosition);
         this.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 

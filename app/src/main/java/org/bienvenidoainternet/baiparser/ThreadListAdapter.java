@@ -228,8 +228,15 @@ public class ThreadListAdapter extends ArrayAdapter<BoardItem>{
         txtReplies.setVisibility(boardItem.isReply ? View.GONE : View.VISIBLE);
         txtReplies.setText(boardItem.getTotalReplies() + " respuestas " + (boardItem.getTotalFiles() == 0 ? "" : ", " + boardItem.getTotalFiles() + " archivos"));
 
+        String fileExt = "";
+        if (!boardItem.getFile().isEmpty()){
+            String[] pathSplit = boardItem.getFile().split("\\.");
+            if (pathSplit.length != 0){
+                fileExt = pathSplit[1].toUpperCase();
+            }
+        }
         txtFileInfo.setVisibility(boardItem.getThumb().isEmpty() ? View.GONE : View.VISIBLE);
-        txtFileInfo.setText((boardItem.getFileSize() / 1024) + " KB " + boardItem.getThumbHeight() + "x" + boardItem.getThumbWidth());
+        txtFileInfo.setText(fileExt + " " + (boardItem.getFileSize() / 1024) + " KB " + boardItem.getThumbHeight() + "x" + boardItem.getThumbWidth());
 
         // Trasnparentar items con sage
         if (convertView != null){

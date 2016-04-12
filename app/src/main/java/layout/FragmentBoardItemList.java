@@ -49,6 +49,7 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
@@ -688,11 +689,15 @@ public class FragmentBoardItemList extends Fragment {
 
         ContextWrapper cw = new ContextWrapper(getActivity().getApplicationContext());
         File directory = cw.getDir("thumbs", Context.MODE_PRIVATE);
-        File mypath = new File(directory, currentBoard.getBoardDir() + "_" + bi.getThumb());
+        if (!directory.exists()){
+            directory.mkdir();
+        }
+        final File mypath = new File(directory, currentBoard.getBoardDir() + "_" + bi.getThumb());
         if (mypath.exists()){
             try {
                 Bitmap b = BitmapFactory.decodeStream(new FileInputStream(mypath));
-                bi.setThumbBitmap(b);
+                bi.setThumbBitmap(Bitmap.createScaledBitmap(b, 128, 128, false));
+                listViewAdapter.notifyDataSetChanged();
                 Log.i("getThumb", bi.getThumb() + " from cache");
                 return;
             }catch (Exception e){
@@ -714,9 +719,20 @@ public class FragmentBoardItemList extends Fragment {
                         if (e != null) {
                             displayError(e.getMessage());
                             e.printStackTrace();
-                        } else {
-                            bi.setThumbBitmap(result);
+                        }else{
+                            bi.setThumbBitmap(Bitmap.createScaledBitmap(result, 128, 128, false));
                             listViewAdapter.notifyDataSetChanged();
+                            FileOutputStream out;
+                            try{
+                                out = new FileOutputStream(mypath);
+                                result.compress(Bitmap.CompressFormat.PNG, 100, out);
+                                if(out != null){
+                                    out.close();
+                                }
+                                Log.v("getThumb", bi.getThumb() + " saved.");
+                            }catch (Exception e1){
+                                e1.printStackTrace();
+                            }
                         }
                     }
                 });

@@ -189,8 +189,9 @@ public class MainActivity extends AppCompatActivity
             refreshNavigator();
         }
 
-        //TODO: Aplicar tema al navigator
-        //navigationView.setBackgroundColor(themeManager.getPrimaryDarkColor());
+        if (tm.isDarkTheme()){
+            navigationView.setBackgroundColor(0xFF888888);
+        }
     }
 
     @Override

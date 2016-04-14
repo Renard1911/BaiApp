@@ -205,13 +205,11 @@ public class FragmentBoardItemList extends Fragment {
                         }
                     }
                 }
-//                System.out.println("[Scroll] firstItem: " + firstVisibleItem + " visible: " + visibleItemCount + " total: " + totalItemCount);
                 if (totalItemCount == firstVisibleItem + visibleItemCount && !loadingMoreThreads && imMainFragment && totalItemCount != 0 && !recentPostMode) {
                     loadingMoreThreads = true;
                     currentOffset += 10;
                     System.out.println("[Scroll] loading more threads! currentThreadCount " + totalItemCount);
                     getThreadList(currentOffset); // TODO: Offset incorrecto
-//                    new TaskParseJSON(currentBoard, true).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
                 }
             }
         });
@@ -261,7 +259,6 @@ public class FragmentBoardItemList extends Fragment {
                     System.out.println("[MainFragment] isCurrentThread null? (it should be!) " + (currentThread == null));
                 }
                 showProgressBar();
-//                new TaskParseJSON(board).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
                 getThreadList(0);
             }else{
                 System.out.println("[MainFragment] Trying to update from a null board object");
@@ -270,7 +267,6 @@ public class FragmentBoardItemList extends Fragment {
             if (currentBoard != null && currentThread != null){
                 System.out.println("atUpdateBoardItems ChildFragment threadID: " + currentThread.getId() + " parentID: " + currentThread.getParentId() + " boardName: " + board.getBoardName() + " " + board.getBoardDir());
                 showProgressBar();
-//                new TaskParseJSON(currentBoard, currentThread).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
                 getThreadReplies();
             }else{
                 System.out.println("[childFragment] trying to update from null objects");
@@ -279,8 +275,6 @@ public class FragmentBoardItemList extends Fragment {
             }
         }
     }
-
-
 
     @Override
     public void onAttach(Context context) {
@@ -371,24 +365,18 @@ public class FragmentBoardItemList extends Fragment {
     public void setCatalogMode() {
         if (recentPostMode){
             boardItems.clear();
-//            listViewAdapter = new ThreadListAdapter(themedContext.getContext(), boardItems, ((MainActivity)getActivity()).themeManager);
             listViewBoardItems.setAdapter(listViewAdapter);
             this.recentPostMode = false;
         }
     }
 
     public void loadRecentPost(){
-        // Cambiamos el flag
         setRecentPostMode();
         mListener.updateToolbar("Post recientes");
-        // Borramos el listview
         boardItems.clear();
         listViewAdapter.clear();
         listViewAdapter.notifyDataSetChanged();
-        // Cargamos un nuevo adaptador.
-//        recentPostAdapter = new RecentPostAdapter(themedContext.getContext(), boardItems);
         listViewBoardItems.setAdapter(recentPostAdapter);
-        // Cargamos la nueva lista
         getRecentPosts();
     }
 
@@ -433,7 +421,6 @@ public class FragmentBoardItemList extends Fragment {
         Ion.with(getContext())
                 .load("http://bienvenidoainternet.org/cgi/api/list?dir=" + currentBoard.getBoardDir() + "&replies=" + repliesForCatalog + strOffset)
                 .setLogging("getThreadList", Log.INFO)
-//                .progressBar(barThreadProcess)
                 .noCache()
                 .asString()
                 .setCallback(new FutureCallback<String>() {
@@ -634,7 +621,6 @@ public class FragmentBoardItemList extends Fragment {
         Ion.with(getContext())
                 .load("http://bienvenidoainternet.org/cgi/api/last?limit=" + limit)
                 .setLogging("getRecentPosts", Log.INFO)
-//                .progressBar(barThreadProcess)
                 .noCache()
                 .asString()
                 .setCallback(new FutureCallback<String>() {
@@ -784,7 +770,6 @@ public class FragmentBoardItemList extends Fragment {
     }
 
     private void setUpThreadProgess(){
-//        barThreadProcess.setVisibility(View.VISIBLE);
         txtThreadProcess.setVisibility(View.GONE);
         layoutThreadProcess.setVisibility(View.VISIBLE);
     }

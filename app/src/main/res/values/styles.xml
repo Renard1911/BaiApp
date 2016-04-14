@@ -64,8 +64,8 @@
     </style>
 
     <style name="AppTheme.BlackActionBar">
-        <item name="colorPrimary">@color/blackBackground</item>
-        <item name="colorPrimaryDark">@color/blackMarginColor</item>
+        <item name="colorPrimary">#101012</item>
+        <item name="colorPrimaryDark">#000000</item>
         <item name="colorAccent">@color/blackMarginColor</item>
         <item name="isDarkTheme">true</item>
     </style>

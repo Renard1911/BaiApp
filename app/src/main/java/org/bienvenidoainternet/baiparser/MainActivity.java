@@ -108,7 +108,7 @@ public class MainActivity extends AppCompatActivity
                             Intent in = new Intent(getApplicationContext(), ResponseActivity.class);
                             Bundle b = new Bundle();
                             b.putParcelable("theReply", childFragment.boardItems.get(0));
-                            b.putParcelable("theBoard", childFragment.currentBoard);
+                            b.putBoolean("quoting", false);
                             in.putExtras(b);
                             startActivity(in);
                         } catch (Exception e) {
@@ -194,7 +194,6 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    //merge test hola, no se ocupar git ww 
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {

@@ -33,11 +33,11 @@ import utils.ContentProviderUtils;
 public class ResponseActivity extends AppCompatActivity {
 
     private BoardItem theReply = null;
-    private Board currentBoard = null;
     private SharedPreferences  settings;
     private String password;
     private String selectedFile = "";
     private final int PICK_IMAGE = 1;
+    private boolean quoting = false;
     EditText filePath;
 
     @Override
@@ -52,14 +52,19 @@ public class ResponseActivity extends AppCompatActivity {
 
         if (savedInstanceState != null){
             this.theReply = savedInstanceState.getParcelable("theReply");
-            this.currentBoard = savedInstanceState.getParcelable("theBoard");
+            this.quoting = savedInstanceState.getBoolean("quoting");
         }
         if (getIntent().getExtras() != null){
             this.theReply = getIntent().getParcelableExtra("theReply");
-            this.currentBoard = getIntent().getParcelableExtra("theBoard");
+            this.quoting = getIntent().getBooleanExtra("quoting", false);
         }
-        if (theReply != null && currentBoard != null){
-            System.out.println(theReply.getId() + " " + theReply.getName());
+        if (theReply != null && quoting){
+            TextView txtMessage = (TextView) findViewById(R.id.txtResponse);
+            if (theReply.getParentBoard().getBoardType() == 1){ // BBS
+                txtMessage.setText(">>" + theReply.getBbsId());
+            }else{
+                txtMessage.setText(">>" + theReply.getId());
+            }
         }
 
         LinearLayout layoutProcess = (LinearLayout)findViewById(R.id.layoutPostProcess);
@@ -163,7 +168,7 @@ public class ResponseActivity extends AppCompatActivity {
                 .load("http://bienvenidoainternet.org/cgi/post")
                 .setLogging("posting", Log.VERBOSE)
                 .uploadProgressBar(progess)
-                .setMultipartParameter("board", currentBoard.getBoardDir())
+                .setMultipartParameter("board", theReply.getParentBoard().getBoardDir())
                 .setMultipartParameter("parent", String.valueOf(theReply.realParentId()))
                 .setMultipartParameter("password", password)
                 .setMultipartParameter("fielda", name)
@@ -176,12 +181,12 @@ public class ResponseActivity extends AppCompatActivity {
                     @Override
                     public void onCompleted(Exception e, String result) {
                         Log.v("sendPost", result);
-                        if (e != null){
+                        if (e != null) {
                             Toast.makeText(getApplicationContext(), "Ha ocurrido un error! ;_;", Toast.LENGTH_LONG).show();
                             formSendPost.setVisibility(View.VISIBLE);
                             err.setText("Error: " + e.getMessage());
                             e.printStackTrace();
-                        }else{
+                        } else {
                             Toast.makeText(getApplicationContext(), "Post enviado", Toast.LENGTH_LONG).show();
                             finish();
                         }
@@ -191,7 +196,7 @@ public class ResponseActivity extends AppCompatActivity {
             Ion.with(getApplicationContext())
                     .load("http://bienvenidoainternet.org/cgi/post")
                     .uploadProgressBar(progess)
-                    .setMultipartParameter("board", currentBoard.getBoardDir())
+                    .setMultipartParameter("board", theReply.getParentBoard().getBoardDir())
                     .setMultipartParameter("parent", String.valueOf(parentId))
                     .setMultipartParameter("password", password)
                     .setMultipartParameter("fielda", name)

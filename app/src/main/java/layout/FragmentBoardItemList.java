@@ -315,7 +315,7 @@ public class FragmentBoardItemList extends Fragment {
                     Intent in = new Intent(getActivity().getApplicationContext(), ResponseActivity.class);
                     Bundle b = new Bundle();
                     b.putParcelable("theReply", boardItems.get(info.position));
-                    b.putParcelable("theBoard", currentBoard);
+                    b.putBoolean("quoting", true);
                     in.putExtras(b);
                     getActivity().startActivity(in);
                     break;

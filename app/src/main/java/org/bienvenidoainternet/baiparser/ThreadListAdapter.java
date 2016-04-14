@@ -115,7 +115,7 @@ public class ThreadListAdapter extends ArrayAdapter<BoardItem>{
             @Override
             public void onClick(View v) {
                 if (!boardItem.getThumb().isEmpty() && convertView != null){
-                    if (boardItem.getFile().endsWith(".webm")){
+                    if (boardItem.getFile().endsWith(".webm") || boardItem.getFile().endsWith(".ogg") || boardItem.getFile().endsWith(".opus") || boardItem.getFile().endsWith(".swf")){
                         Intent in = new Intent(Intent.ACTION_VIEW, Uri.parse("http://bienvenidoainternet.org/" + boardItem.getParentBoard().getBoardDir() + "/src/" + boardItem.getFile()));
                         in.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                         v.getContext().startActivity(in);

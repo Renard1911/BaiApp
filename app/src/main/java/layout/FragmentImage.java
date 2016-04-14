@@ -83,7 +83,7 @@ public class FragmentImage extends Fragment {
         gifView.setVisibility(View.GONE);
         RelativeLayout layoutOpenBrowser = (RelativeLayout) view.findViewById(R.id.layoutOpenBrowser);
         if (boardItemFile.file != null) {
-            if (!boardItemFile.file.endsWith(".webm") && !boardItemFile.file.endsWith(".swf")) {
+            if (!boardItemFile.file.endsWith(".webm") && !boardItemFile.file.endsWith(".swf") && !boardItemFile.file.endsWith(".ogg") && !boardItemFile.file.endsWith(".opus")) {
                 layoutOpenBrowser.setVisibility(View.GONE);
                 downloadFile();
             }else{

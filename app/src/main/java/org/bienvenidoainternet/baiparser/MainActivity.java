@@ -120,17 +120,37 @@ public class MainActivity extends AppCompatActivity
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (childFragment.currentBoard != null) {
-                    if (!childFragment.boardItems.isEmpty()) {
-                        try {
-                            Intent in = new Intent(getApplicationContext(), ResponseActivity.class);
-                            Bundle b = new Bundle();
-                            b.putParcelable("theReply", childFragment.boardItems.get(0));
-                            b.putBoolean("quoting", false);
-                            in.putExtras(b);
-                            startActivity(in);
-                        } catch (Exception e) {
-                            e.printStackTrace();
+                if (pager.getCurrentItem() == 0){
+                    if (!mainFragment.getMode() && mainFragment.currentBoard != null){
+                        Intent in = new Intent(getApplicationContext(), ResponseActivity.class);
+                        Bundle b = new Bundle();
+                        BoardItem temp = new BoardItem();
+                        temp.setParentBoard(mainFragment.currentBoard);
+                        b.putParcelable("theReply", temp);
+                        b.putBoolean("quoting", false);
+                        b.putBoolean("newthread", true);
+                        in.putExtras(b);
+                        startActivity(in);
+                    }
+                }else{
+                    if (childFragment.currentBoard != null) {
+                        if (!childFragment.boardItems.isEmpty()) {
+                            try {
+                                Intent in = new Intent(getApplicationContext(), ResponseActivity.class);
+                                Bundle b = new Bundle();
+                                BoardItem reply = childFragment.boardItems.get(0);
+                                if (!reply.isLocked) {
+                                    b.putParcelable("theReply", reply);
+                                    b.putBoolean("quoting", false);
+                                    b.putBoolean("newthread", false);
+                                    in.putExtras(b);
+                                    startActivity(in);
+                                }else{
+                                    Toast.makeText(getApplicationContext(), "Error: Este hilo está cerrado", Toast.LENGTH_LONG).show();
+                                }
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
                         }
                     }
                 }
@@ -170,6 +190,7 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onPageSelected(int position) {
                 if (position == 0){
+                    fab.setImageResource(R.drawable.ic_action_add);
                     if (mainFragment.currentBoard != null) {
                         toolbar.setTitle("Catálogo");
                         toolbar.setSubtitle(mainFragment.currentBoard.getBoardName());
@@ -178,14 +199,19 @@ public class MainActivity extends AppCompatActivity
                         toolbar.setTitle("Post recientes");
                         toolbar.setSubtitle("");
                     }
-                    fab.setVisibility(View.INVISIBLE);
+                    if (mainFragment.getMode()){
+                        fab.hide();
+                    }else{
+                        fab.show();
+                    }
                 }else if (position == 1){
+                    fab.setImageResource(R.drawable.ic_edit);
                     if (childFragment.currentBoard != null) {
                         toolbar.setTitle(childFragment.currentBoard.getBoardName());
                         if (!childFragment.boardItems.isEmpty()){
                             toolbar.setSubtitle(childFragment.boardItems.get(0).getSubject());
                         }
-                        fab.setVisibility(View.VISIBLE);
+                        fab.show();
                     }
                 }
             }
@@ -367,6 +393,32 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+    @Override
+    public void onThreadList() {
+        if (pager.getCurrentItem() == 0){
+            getSupportActionBar().setTitle("Catálogo");
+            getSupportActionBar().setSubtitle(mainFragment.currentBoard.getBoardName());
+            fab.show();
+        }
+    }
+
+    @Override
+    public void onThread() {
+        if (pager.getCurrentItem() == 1){
+            getSupportActionBar().setTitle(childFragment.currentBoard.getBoardName());
+            getSupportActionBar().setSubtitle(childFragment.boardItems.get(0).getSubject());
+        }
+    }
+
+    @Override
+    public void onRecentPosts() {
+        if (pager.getCurrentItem() == 0){
+            getSupportActionBar().setTitle("Post recientes");
+            getSupportActionBar().setSubtitle("");
+            fab.hide();
+        }
+    }
+
     private void getBoardList(){
         Menu menu = navigationView.getMenu();
         final SubMenu sub = menu.addSubMenu("Lista de Boards");
@@ -384,7 +436,7 @@ public class MainActivity extends AppCompatActivity
                                 JSONArray boards = new JSONObject(result).getJSONArray("boards");
                                 for (int i = 0; i < boards.length(); i++) {
                                     JSONObject board = boards.getJSONObject(i);
-                                    Board parsedBoard = new Board(board.getString("name"), board.getString("dir"), board.getInt("board_type"));
+                                    Board parsedBoard = new Board(board.getString("name"), board.getString("dir"), board.getInt("board_type"), board.getInt("allow_image_replies") == 1 ? true : false);
                                     sub.add(parsedBoard.getBoardName());
                                     boardList.add(parsedBoard);
                                 }
@@ -395,6 +447,10 @@ public class MainActivity extends AppCompatActivity
                         }
                     }
                 });
+
+        Board parsedBoard = new Board("Testing Field", "polka", 1, true);
+        sub.add(parsedBoard.getBoardName());
+        boardList.add(parsedBoard);
         refreshNavigator();
     }
 

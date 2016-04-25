@@ -410,6 +410,11 @@ public class FragmentBoardItemList extends Fragment {
         void updateToolbar(String s);
         void hideActionButton();
         void showActionButton();
+        void onThreadList();
+
+        void onThread();
+
+        void onRecentPosts();
     }
 
     public void scrollToBotton(){
@@ -459,7 +464,6 @@ public class FragmentBoardItemList extends Fragment {
                                     item.setFile(thread.getString("file"));
                                     item.setFilesize(thread.getInt("file_size"));
                                     item.setId(thread.getInt("id"));
-                                    item.setMessage(thread.getString("message"));
                                     item.setName(thread.getString("name"));
                                     item.setSubject(thread.getString("subject"));
                                     item.setThumb(thread.getString("thumb"));
@@ -470,6 +474,7 @@ public class FragmentBoardItemList extends Fragment {
                                     item.setTotalReplies(thread.getInt("total_replies"));
                                     item.setTripcode(thread.getString("tripcode"));
                                     item.setTimeStampFormatted(thread.getString("timestamp_formatted"));
+                                    item.setLockStatus(thread.getInt("locked"));
                                     if (item.getTimeStampFormatted().contains("ID")){
                                         item.setPosterId(item.getTimeStampFormatted().split(" ")[1].replace("ID :", ""));
                                     }
@@ -479,6 +484,7 @@ public class FragmentBoardItemList extends Fragment {
                                     if (currentBoard.getBoardType() == 1){
                                         item.setBbsId(1);
                                     }
+                                    item.setMessage(thread.getString("message"));
                                     boardItems.add(item);
                                     if (!repliesForCatalog.equals("0")){
                                         JSONArray replies = thread.getJSONArray("replies");
@@ -495,7 +501,7 @@ public class FragmentBoardItemList extends Fragment {
                                                 reply.setFilesize(jReply.getInt("file_size"));
                                                 reply.setId(jReply.getInt("id"));
                                                 reply.setParentId(item.getId());
-                                                reply.setMessage(jReply.getString("message"));
+                                                reply.setLockStatus(item.isLocked ? 1 : 0);
                                                 reply.setName(jReply.getString("name"));
                                                 reply.setSubject(jReply.getString("subject"));
                                                 reply.setThumb(jReply.getString("thumb"));
@@ -512,10 +518,12 @@ public class FragmentBoardItemList extends Fragment {
                                                 reply.setIdColor(addReplyID(reply.getPosterId()));
                                                 //
                                                 reply.setTotalReplies(item.getTotalReplies());
+                                                reply.setMessage(jReply.getString("message"));
                                             }else{
                                                 reply.setTimeStamp(jReply.getLong("timestamp"));
                                                 reply.setId(jReply.getInt("id"));
                                                 reply.isReply = true;
+                                                reply.setLockStatus(item.isLocked ? 1 : 0);
                                             }
                                             boardItems.add(reply);
                                         }
@@ -528,6 +536,7 @@ public class FragmentBoardItemList extends Fragment {
                         }
                         listViewAdapter.notifyDataSetChanged();
                         listViewAdapter.updateBoardItems(boardItems);
+                        mListener.onThreadList();
                         loadingMoreThreads = false;
                         if (boardItems.isEmpty()){
                             mListener.updateToolbar(currentBoard, currentThread);
@@ -575,7 +584,6 @@ public class FragmentBoardItemList extends Fragment {
                                         item.setFile(reply.getString("file"));
                                         item.setFilesize(reply.getInt("file_size"));
                                         item.setId(reply.getInt("id"));
-                                        item.setMessage(reply.getString("message"));
                                         item.setName(reply.getString("name"));
                                         item.setSubject(reply.getString("subject"));
                                         item.setThumb(reply.getString("thumb"));
@@ -583,6 +591,7 @@ public class FragmentBoardItemList extends Fragment {
                                         item.setThumbWidth(reply.getInt("thumb_width"));
                                         item.setTimeStamp(reply.getLong("timestamp"));
                                         item.setParentId(json.getInt("id"));
+                                        item.setLockStatus(json.getInt("locked"));
                                         item.setTripcode(reply.getString("tripcode"));
                                         item.setTimeStampFormatted(reply.getString("timestamp_formatted"));
                                         if (item.getTimeStampFormatted().contains("ID")){
@@ -599,6 +608,7 @@ public class FragmentBoardItemList extends Fragment {
                                                 item.setBbsId((item.getTotalReplies() - finalLimit + i) + 2);
                                             }
                                         }
+                                        item.setMessage(reply.getString("message"));
 
                                     } else {
                                         item.setId(reply.getInt("id"));
@@ -626,6 +636,7 @@ public class FragmentBoardItemList extends Fragment {
                             listViewBoardItems.setSelection(boardItems.size());
                             mListener.showActionButton();
                         }
+                        mListener.onThread();
                         hideProgressBar();
                     }
                 });
@@ -658,7 +669,6 @@ public class FragmentBoardItemList extends Fragment {
                                     recentPost.setFile(jPost.getString("file"));
                                     recentPost.setFilesize(jPost.getInt("file_size"));
                                     recentPost.setId(jPost.getInt("id"));
-                                    recentPost.setMessage(jPost.getString("message"));
                                     recentPost.setName(jPost.getString("name"));
                                     recentPost.setSubject(jPost.getString("subject"));
                                     recentPost.setThumb(jPost.getString("thumb"));
@@ -672,6 +682,7 @@ public class FragmentBoardItemList extends Fragment {
                                     }
                                     recentPost.setParentBoard(((MainActivity) getActivity()).getBoardFromDir(jPost.getString("dir")));
                                     recentPost.setParentId(jPost.getInt("parentid"));
+                                    recentPost.setMessage(jPost.getString("message"));
                                     boardItems.add(recentPost);
                                 }
                             } catch (JSONException e1) {
@@ -680,6 +691,7 @@ public class FragmentBoardItemList extends Fragment {
                             }
                         }
                         recentPostAdapter.notifyDataSetChanged();
+                        mListener.onRecentPosts();
                     }
                 });
 
@@ -696,7 +708,13 @@ public class FragmentBoardItemList extends Fragment {
         if (!directory.exists()){
             directory.mkdir();
         }
-        final File mypath = new File(directory, currentBoard.getBoardDir() + "_" + bi.getThumb());
+        final File mypath;
+        if (bi.youtubeLink){
+            mypath = new File(directory, currentBoard.getBoardDir() + "_" + bi.youtubeID);
+        }else{
+            mypath = new File(directory, currentBoard.getBoardDir() + "_" + bi.getThumb());
+        }
+
         if (mypath.exists()){
             try {
                 Bitmap b = BitmapFactory.decodeStream(new FileInputStream(mypath));
@@ -713,8 +731,12 @@ public class FragmentBoardItemList extends Fragment {
             Log.i("getThumb", "Not using wifi");
             return;
         }
+        String imgURL = "http://bienvenidoainternet.org/" + bi.getParentBoard().getBoardDir() + "/thumb/" + bi.getThumb();
+        if (bi.getThumb().startsWith("http")){
+            imgURL = bi.getThumb();
+        }
         Ion.with(getContext())
-                .load("http://bienvenidoainternet.org/" + bi.getParentBoard().getBoardDir() + "/thumb/" + bi.getThumb())
+                .load(imgURL)
                 .setLogging("getThumbnail", Log.INFO)
                 .asBitmap()
                 .setCallback(new FutureCallback<Bitmap>() {
@@ -778,8 +800,8 @@ public class FragmentBoardItemList extends Fragment {
 
 
     public int addReplyID(String s){
-        if (!idList.contains(new ReplyID(s))){
-            idList.add(new ReplyID(s));
+        if (!idList.contains(new ReplyID(s, tm))){
+            idList.add(new ReplyID(s, tm));
         }
         for (ReplyID r : idList){
             if (r.id.equals(s)){return r.color;}

@@ -17,6 +17,10 @@
             android:title="Usar Mona.tff solo en BSS"
             android:key="setting_mona_bbsonly"
             android:defaultValue="true"/>
+        <SwitchPreference
+            android:title="Redimensionar thumbnails"
+            android:key="setting_resize_thumbs"
+            android:defaultValue="true"/>
     </PreferenceCategory>
     <PreferenceCategory
         android:title="Comportamiento">

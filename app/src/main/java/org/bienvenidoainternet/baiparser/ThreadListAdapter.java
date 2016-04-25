@@ -108,6 +108,7 @@ public class ThreadListAdapter extends ArrayAdapter<BoardItem>{
         SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this.getContext());
         boolean useMonaFont = settings.getBoolean("setting_monafont", true);
         boolean monaBbsOnly = settings.getBoolean("setting_mona_bbsonly", true);
+        boolean resizeThumb = settings.getBoolean("setting_resize_thumbs", true);
         int marginColor = tm.getMarginColor();
         int sageColor = tm.getSageColor();
         int nameColor = tm.getNameColor();
@@ -126,12 +127,24 @@ public class ThreadListAdapter extends ArrayAdapter<BoardItem>{
         ImageView ivMargin = (ImageView)listItemView.findViewById(R.id.ivMargin);
         ImageView ivThumb = (ImageView)listItemView.findViewById(R.id.ivThumb);
 
+//        Log.v("resize", resizeThumb + "");
+        if (resizeThumb){
+            ivThumb.setScaleType(ImageView.ScaleType.FIT_XY);
+        }else{
+            ivThumb.setScaleType(ImageView.ScaleType.FIT_CENTER);
+        }
+
         ivThumb.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (!boardItem.getThumb().isEmpty() && convertView != null){
-                    if (boardItem.getFile().endsWith(".webm") || boardItem.getFile().endsWith(".ogg") || boardItem.getFile().endsWith(".opus") || boardItem.getFile().endsWith(".swf")){
-                        Intent in = new Intent(Intent.ACTION_VIEW, Uri.parse("http://bienvenidoainternet.org/" + boardItem.getParentBoard().getBoardDir() + "/src/" + boardItem.getFile()));
+                    if (boardItem.getFile().endsWith(".webm") || boardItem.getFile().endsWith(".ogg") || boardItem.getFile().endsWith(".opus") || boardItem.getFile().endsWith(".swf") || boardItem.youtubeLink){
+                        Intent in;
+                        if (boardItem.youtubeLink){
+                            in = new Intent(Intent.ACTION_VIEW, Uri.parse(boardItem.youtubeURL));
+                        }else{
+                            in = new Intent(Intent.ACTION_VIEW, Uri.parse("http://bienvenidoainternet.org/" + boardItem.getParentBoard().getBoardDir() + "/src/" + boardItem.getFile()));
+                        }
                         in.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                         v.getContext().startActivity(in);
                     }else {
@@ -244,14 +257,20 @@ public class ThreadListAdapter extends ArrayAdapter<BoardItem>{
         txtReplies.setText(boardItem.getTotalReplies() + " respuestas " + (boardItem.getTotalFiles() == 0 ? "" : ", " + boardItem.getTotalFiles() + " archivos"));
 
         String fileExt = "";
-        if (!boardItem.getFile().isEmpty()){
-            String[] pathSplit = boardItem.getFile().split("\\.");
-            if (pathSplit.length != 0){
-                fileExt = pathSplit[1].toUpperCase();
-            }
-        }
         txtFileInfo.setVisibility(boardItem.getThumb().isEmpty() ? View.GONE : View.VISIBLE);
-        txtFileInfo.setText(fileExt + " " + (boardItem.getFileSize() / 1024) + " KB " + boardItem.getThumbHeight() + "x" + boardItem.getThumbWidth());
+
+        if (!boardItem.getThumb().isEmpty() && boardItem.getThumb().startsWith("http")){
+            txtFileInfo.setText("YOUTUBE");
+        }else{
+            if (!boardItem.getFile().isEmpty()){
+                String[] pathSplit = boardItem.getFile().split("\\.");
+                if (pathSplit.length != 0){
+                    fileExt = pathSplit[1].toUpperCase();
+                }
+            }
+            txtFileInfo.setText(fileExt + " " + (boardItem.getFileSize() / 1024) + " KB " + boardItem.getThumbHeight() + "x" + boardItem.getThumbWidth());
+        }
+
 
         // Trasnparentar items con sage
         if (convertView != null){

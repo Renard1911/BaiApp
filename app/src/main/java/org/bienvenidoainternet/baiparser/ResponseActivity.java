@@ -54,7 +54,7 @@ public class ResponseActivity extends AppCompatActivity {
     private String password;
     private String selectedFile = "";
     private final int PICK_IMAGE = 1;
-    private boolean quoting = false;
+    private boolean quoting = false, newthread = false;
     EditText filePath;
 
     @Override
@@ -63,18 +63,34 @@ public class ResponseActivity extends AppCompatActivity {
         ThemeManager tm = new ThemeManager(this);
         this.setTheme(tm.getThemeForActivity());
         setContentView(R.layout.activity_response);
-        getSupportActionBar().setTitle("Respondiendo");
+
         settings = PreferenceManager.getDefaultSharedPreferences(this);
         password = settings.getString("pref_password", "12345678");
 
         if (savedInstanceState != null){
             this.theReply = savedInstanceState.getParcelable("theReply");
             this.quoting = savedInstanceState.getBoolean("quoting");
+            this.newthread = savedInstanceState.getBoolean("newthread");
         }
         if (getIntent().getExtras() != null){
             this.theReply = getIntent().getParcelableExtra("theReply");
             this.quoting = getIntent().getBooleanExtra("quoting", false);
+            this.newthread = getIntent().getBooleanExtra("newthread", false);
         }
+
+        if (newthread){
+            getSupportActionBar().setTitle("Nuevo hilo");
+            getSupportActionBar().setSubtitle(theReply.getParentBoard().getBoardName());
+        }else{
+            getSupportActionBar().setTitle("Respondiendo");
+        }
+
+        TextView txtFilePath = (TextView) findViewById(R.id.txtFilePath);
+        Button btnSelectFile = (Button) findViewById(R.id.btnSelectFiles);
+        TextView txtThreadSubject = (TextView) findViewById(R.id.txtThreadSubject);
+
+        txtThreadSubject.setVisibility(newthread ? View.VISIBLE : View.GONE);
+
         if (theReply != null && quoting){
             TextView txtMessage = (TextView) findViewById(R.id.txtResponse);
             if (theReply.getParentBoard().getBoardType() == 1){ // BBS
@@ -82,6 +98,9 @@ public class ResponseActivity extends AppCompatActivity {
             }else{
                 txtMessage.setText(">>" + theReply.getId());
             }
+        }else if (theReply != null){
+            txtFilePath.setVisibility(theReply.getParentBoard().isCanAttachFiles() ? View.VISIBLE : View.GONE);
+            btnSelectFile.setVisibility(theReply.getParentBoard().isCanAttachFiles() ? View.VISIBLE : View.GONE);
         }
 
         LinearLayout layoutProcess = (LinearLayout)findViewById(R.id.layoutPostProcess);
@@ -89,39 +108,49 @@ public class ResponseActivity extends AppCompatActivity {
         filePath = (EditText) findViewById(R.id.txtFilePath);
 
         Button bBold = (Button) findViewById(R.id.buttonBold);
+        Button bStrike = (Button) findViewById(R.id.buttonStrike);
+        Button bList = (Button) findViewById(R.id.buttonList);
+        Button bCode = (Button) findViewById(R.id.buttonCode);
+        Button bUnder = (Button) findViewById(R.id.buttonUnderline);
+        Button bItalic = (Button) findViewById(R.id.buttonItalic);
+        Button select = (Button) findViewById(R.id.btnSelectFiles);
+
         bBold.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                TextView txtMessage = (TextView) findViewById(R.id.txtResponse);
-                if (txtMessage.getSelectionStart() == -1){
-                    txtMessage.setText(txtMessage.getText() + "<b></b>");
-                }else{
-                    String s = txtMessage.getText().toString();
-                    String a = s.substring(0, txtMessage.getSelectionStart());
-                    String b = s.substring(txtMessage.getSelectionStart(), txtMessage.getSelectionEnd());
-                    String c = s.substring(txtMessage.getSelectionEnd(), txtMessage.getText().length());
-                    txtMessage.setText(a + "<b>" + b + "</b>" + c);
-                }
+                applyTag("b");
             }
         });
-        Button bItalic = (Button) findViewById(R.id.buttonItalic);
         bItalic.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                TextView txtMessage = (TextView) findViewById(R.id.txtResponse);
-                if (txtMessage.getSelectionStart() == -1){
-                    txtMessage.setText(txtMessage.getText() + "<i></i>");
-                }else{
-                    String s = txtMessage.getText().toString();
-                    String a = s.substring(0, txtMessage.getSelectionStart());
-                    String b = s.substring(txtMessage.getSelectionStart(), txtMessage.getSelectionEnd());
-                    String c = s.substring(txtMessage.getSelectionEnd(), txtMessage.getText().length());
-                    txtMessage.setText(a + "<i>" + b + "</i>" + c);
-                }
+                applyTag("i");
             }
         });
-
-        Button select = (Button) findViewById(R.id.btnSelectFiles);
+        bStrike.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                applyTag("strike");
+            }
+        });
+        bList.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                applyTag("ul");
+            }
+        });
+        bCode.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                applyTag("code");
+            }
+        });
+        bUnder.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                applyTag("u");
+            }
+        });
 
         select.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -133,6 +162,19 @@ public class ResponseActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    private void applyTag(String tag){
+        TextView txtMessage = (TextView) findViewById(R.id.txtResponse);
+        if (txtMessage.getSelectionStart() == -1){
+            txtMessage.setText(txtMessage.getText() + "<" + tag + "></" + tag +">");
+        }else{
+            String s = txtMessage.getText().toString();
+            String a = s.substring(0, txtMessage.getSelectionStart());
+            String b = s.substring(txtMessage.getSelectionStart(), txtMessage.getSelectionEnd());
+            String c = s.substring(txtMessage.getSelectionEnd(), txtMessage.getText().length());
+            txtMessage.setText(a + "<" + tag + ">" + b + "</" + tag + ">" + c);
+        }
     }
 
     @Override
@@ -147,7 +189,8 @@ public class ResponseActivity extends AppCompatActivity {
             TextView txtName = (TextView) findViewById(R.id.txtPosterName);
             TextView txtEmail = (TextView) findViewById(R.id.txtEmail);
             TextView txtMessage = (TextView) findViewById(R.id.txtResponse);
-            makePost(txtName.getText().toString(), txtEmail.getText().toString(), txtMessage.getText().toString());
+            TextView txtThreadSubject = (TextView) findViewById(R.id.txtThreadSubject);
+            makePost(txtName.getText().toString(), txtEmail.getText().toString(), txtMessage.getText().toString(), txtThreadSubject.getText().toString());
         }
         return super.onOptionsItemSelected(item);
     }
@@ -168,10 +211,11 @@ public class ResponseActivity extends AppCompatActivity {
         super.onSaveInstanceState(outState);
     }
 
-    private void makePost(String name, String email, String message){
-        int parentId = theReply.getParentId();
-        if (theReply.getParentId() == 0 || theReply.getParentId() == -1){
-            parentId = theReply.getId();
+    private void makePost(String name, String email, String message, String subject){
+        int parentId = theReply.realParentId();
+        // Si el parentId = 0 && subject != "" ==> Nuevo hilo
+        if (newthread){
+            parentId = 0;
         }
         LinearLayout layoutProcess = (LinearLayout)findViewById(R.id.layoutPostProcess);
         layoutProcess.setVisibility(View.VISIBLE);
@@ -181,62 +225,146 @@ public class ResponseActivity extends AppCompatActivity {
         final TextView err = (TextView)findViewById(R.id.txtPostingState);
         err.setText("");
         File up = new File(selectedFile);
-        if (selectedFile.isEmpty()) Ion.with(getApplicationContext())
-                .load("http://bienvenidoainternet.org/cgi/post")
-                .setLogging("posting", Log.VERBOSE)
-                .uploadProgressBar(progess)
-                .setMultipartParameter("board", theReply.getParentBoard().getBoardDir())
-                .setMultipartParameter("parent", String.valueOf(theReply.realParentId()))
-                .setMultipartParameter("password", password)
-                .setMultipartParameter("fielda", name)
-                .setMultipartParameter("fieldb", email)
-                .setMultipartParameter("name", "")
-                .setMultipartParameter("email", "")
-                .setMultipartParameter("message", message)
-                .asString()
-                .setCallback(new FutureCallback<String>() {
-                    @Override
-                    public void onCompleted(Exception e, String result) {
-                        Log.v("sendPost", result);
-                        if (e != null) {
-                            Toast.makeText(getApplicationContext(), "Ha ocurrido un error! ;_;", Toast.LENGTH_LONG).show();
-                            formSendPost.setVisibility(View.VISIBLE);
-                            err.setText("Error: " + e.getMessage());
-                            e.printStackTrace();
-                        } else {
-                            Toast.makeText(getApplicationContext(), "Post enviado", Toast.LENGTH_LONG).show();
-                            finish();
-                        }
-                    }
-                });
-        else{
-            Ion.with(getApplicationContext())
-                    .load("http://bienvenidoainternet.org/cgi/post")
-                    .uploadProgressBar(progess)
-                    .setMultipartParameter("board", theReply.getParentBoard().getBoardDir())
-                    .setMultipartParameter("parent", String.valueOf(parentId))
-                    .setMultipartParameter("password", password)
-                    .setMultipartParameter("fielda", name)
-                    .setMultipartParameter("fieldb", email)
-                    .setMultipartParameter("name", "")
-                    .setMultipartParameter("email", "")
-                    .setMultipartParameter("message", message)
-                    .setMultipartFile("file", up)
-                    .asDocument()
-                    .setCallback(new FutureCallback<Document>() {
-                        @Override
-                        public void onCompleted(Exception e, Document result) {
-                            if (e != null){
-                                Toast.makeText(getApplicationContext(), "Ha ocurrido un error! ;_;", Toast.LENGTH_LONG).show();
-                                formSendPost.setVisibility(View.VISIBLE);
-                                err.setText("Error: " + e.getMessage());
-                                e.printStackTrace();
-                            }else{
-                                Toast.makeText(getApplicationContext(), "Post enviado", Toast.LENGTH_LONG).show();
-                                finish();
+
+        if (newthread){
+            if (selectedFile.isEmpty()){
+                Ion.with(getApplicationContext())
+                        .load("http://bienvenidoainternet.org/cgi/post")
+                        .setLogging("posting", Log.VERBOSE)
+                        .uploadProgressBar(progess)
+                        .setMultipartParameter("board", theReply.getParentBoard().getBoardDir())
+                        .setMultipartParameter("password", password)
+                        .setMultipartParameter("fielda", name)
+                        .setMultipartParameter("fieldb", email)
+                        .setMultipartParameter("name", "")
+                        .setMultipartParameter("email", "")
+                        .setMultipartParameter("message", message)
+                        .setMultipartParameter("subject", subject)
+                        .setMultipartParameter("noimage", "on")
+                        .asString()
+                        .setCallback(new FutureCallback<String>() {
+                            @Override
+                            public void onCompleted(Exception e, String result) {
+                                Log.v("sendPost", result);
+                                if (e != null) {
+                                    Toast.makeText(getApplicationContext(), "Ha ocurrido un error! ;_;", Toast.LENGTH_LONG).show();
+                                    formSendPost.setVisibility(View.VISIBLE);
+                                    err.setText("Error: " + e.getMessage());
+                                    e.printStackTrace();
+                                } else {
+                                    if (result.contains("ERROR : Flood detectado.")){
+                                        Toast.makeText(getApplicationContext(), "Error: Flood detectado.", Toast.LENGTH_LONG).show();
+                                    }else{
+                                        Toast.makeText(getApplicationContext(), "Post enviado", Toast.LENGTH_LONG).show();
+                                    }
+                                    finish();
+                                }
                             }
-                        }
-                    });
+                        });
+            }else{
+                Ion.with(getApplicationContext())
+                        .load("http://bienvenidoainternet.org/cgi/post")
+                        .uploadProgressBar(progess)
+                        .setMultipartParameter("board", theReply.getParentBoard().getBoardDir())
+                        .setMultipartParameter("password", password)
+                        .setMultipartParameter("fielda", name)
+                        .setMultipartParameter("fieldb", email)
+                        .setMultipartParameter("name", "")
+                        .setMultipartParameter("email", "")
+                        .setMultipartParameter("message", message)
+                        .setMultipartParameter("subject", subject)
+                        .setMultipartFile("file", up)
+                        .asString()
+                        .setCallback(new FutureCallback<String>() {
+                            @Override
+                            public void onCompleted(Exception e, String result) {
+                                Log.v("sendPost", result);
+                                if (e != null){
+                                    Toast.makeText(getApplicationContext(), "Ha ocurrido un error! ;_;", Toast.LENGTH_LONG).show();
+                                    formSendPost.setVisibility(View.VISIBLE);
+                                    err.setText("Error: " + e.getMessage());
+                                    e.printStackTrace();
+                                }else{
+                                    if (result.contains("ERROR : Flood detectado.")){
+                                        Toast.makeText(getApplicationContext(), "Error: Flood detectado.", Toast.LENGTH_LONG).show();
+                                    }else{
+                                        Toast.makeText(getApplicationContext(), "Post enviado", Toast.LENGTH_LONG).show();
+                                    }
+                                    finish();
+                                }
+                            }
+                        });
+            }
+        }else{
+            if (selectedFile.isEmpty()){
+                Ion.with(getApplicationContext())
+                        .load("http://bienvenidoainternet.org/cgi/post")
+                        .setLogging("posting", Log.VERBOSE)
+                        .uploadProgressBar(progess)
+                        .setMultipartParameter("board", theReply.getParentBoard().getBoardDir())
+                        .setMultipartParameter("parent", String.valueOf(parentId))
+                        .setMultipartParameter("password", password)
+                        .setMultipartParameter("fielda", name)
+                        .setMultipartParameter("fieldb", email)
+                        .setMultipartParameter("name", "")
+                        .setMultipartParameter("email", "")
+                        .setMultipartParameter("message", message)
+                        .setMultipartParameter("subject", subject)
+                        .asString()
+                        .setCallback(new FutureCallback<String>() {
+                            @Override
+                            public void onCompleted(Exception e, String result) {
+                                Log.v("sendPost", result);
+                                if (e != null) {
+                                    Toast.makeText(getApplicationContext(), "Ha ocurrido un error! ;_;", Toast.LENGTH_LONG).show();
+                                    formSendPost.setVisibility(View.VISIBLE);
+                                    err.setText("Error: " + e.getMessage());
+                                    e.printStackTrace();
+                                } else {
+                                    if (result.contains("ERROR : Flood detectado.")){
+                                        Toast.makeText(getApplicationContext(), "Error: Flood detectado.", Toast.LENGTH_LONG).show();
+                                    }else{
+                                        Toast.makeText(getApplicationContext(), "Post enviado", Toast.LENGTH_LONG).show();
+                                    }
+                                    finish();
+                                }
+                            }
+                        });
+            }else{
+                Ion.with(getApplicationContext())
+                        .load("http://bienvenidoainternet.org/cgi/post")
+                        .uploadProgressBar(progess)
+                        .setMultipartParameter("board", theReply.getParentBoard().getBoardDir())
+                        .setMultipartParameter("parent", String.valueOf(parentId))
+                        .setMultipartParameter("password", password)
+                        .setMultipartParameter("fielda", name)
+                        .setMultipartParameter("fieldb", email)
+                        .setMultipartParameter("name", "")
+                        .setMultipartParameter("email", "")
+                        .setMultipartParameter("message", message)
+                        .setMultipartParameter("subject", subject)
+                        .setMultipartFile("file", up)
+                        .asString()
+                        .setCallback(new FutureCallback<String>() {
+                            @Override
+                            public void onCompleted(Exception e, String result) {
+                                Log.v("sendPost", result);
+                                if (e != null){
+                                    Toast.makeText(getApplicationContext(), "Ha ocurrido un error! ;_;", Toast.LENGTH_LONG).show();
+                                    formSendPost.setVisibility(View.VISIBLE);
+                                    err.setText("Error: " + e.getMessage());
+                                    e.printStackTrace();
+                                }else{
+                                    if (result.contains("ERROR : Flood detectado.")){
+                                        Toast.makeText(getApplicationContext(), "Error: Flood detectado.", Toast.LENGTH_LONG).show();
+                                    }else{
+                                        Toast.makeText(getApplicationContext(), "Post enviado", Toast.LENGTH_LONG).show();
+                                    }
+                                    finish();
+                                }
+                            }
+                        });
+            }
         }
     }
 }

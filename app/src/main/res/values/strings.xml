@@ -12,6 +12,7 @@
     <string name="txt_email">E-mail</string>
     <string name="txt_response">Respuesta</string>
     <string name="btn_send">Responder</string>
+    <string name="txt_thread_subject">Asunto</string>
 
     <string name="menu_reply">Citar</string>
     <string name="menu_copy">Copiar</string>

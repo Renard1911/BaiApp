@@ -4,6 +4,8 @@ import android.graphics.Color;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import org.bienvenidoainternet.baiparser.ThemeManager;
+
 import java.util.Random;
 
 /**
@@ -26,10 +28,14 @@ import java.util.Random;
 public class ReplyID implements Parcelable{
     public String id;
     public int color;
-    public ReplyID(String id){
+    public ReplyID(String id, ThemeManager tm){
         this.id = id;
         Random r = new Random();
-        this.color = Color.rgb(r.nextInt(125) + 127, r.nextInt(127) + 127, r.nextInt(127) + 127);
+        if (tm.isDarkTheme()){
+            this.color = Color.rgb(r.nextInt(125) + 127, r.nextInt(127) + 127, r.nextInt(127) + 127);
+        }else{
+            this.color = Color.rgb(r.nextInt(125), r.nextInt(127), r.nextInt(127));
+        }
     }
 
     protected ReplyID(Parcel in) {

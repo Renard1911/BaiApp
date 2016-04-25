@@ -14,40 +14,17 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/layoutForm">
-        <EditText
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:inputType="textPersonName"
-            android:ems="10"
-            android:id="@+id/txtPosterName"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
-            android:hint="@string/txt_postername" />
 
         <EditText
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:inputType="textEmailAddress"
-            android:ems="10"
             android:id="@+id/txtEmail"
+            android:hint="@string/txt_email"
             android:layout_below="@+id/txtPosterName"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
-            android:hint="@string/txt_email" />
-
-        <EditText
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:inputType="textMultiLine"
-            android:ems="10"
-            android:id="@+id/txtResponse"
-            android:hint="@string/txt_response"
-            android:layout_below="@+id/buttonBold"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
-            android:clickable="false"
-            android:capitalize="sentences" />
+            android:nextFocusDown="@+id/txtThreadSubject"/>
 
         <Button
             style="?android:attr/buttonStyleSmall"
@@ -55,7 +32,7 @@
             android:layout_height="32dp"
             android:id="@+id/buttonBold"
             android:background="@drawable/ic_action_font_bold"
-            android:layout_below="@+id/txtFilePath"
+            android:layout_below="@+id/btnSelectFiles"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true" />
 
@@ -65,21 +42,10 @@
             android:layout_height="32dp"
             android:background="@drawable/ic_action_font_italic"
             android:id="@+id/buttonItalic"
-            android:layout_alignTop="@+id/buttonBold"
+            android:layout_above="@+id/txtResponse"
             android:layout_toRightOf="@+id/buttonBold"
-            android:layout_toEndOf="@+id/buttonBold" />
-
-        <EditText
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/txtFilePath"
-            android:layout_below="@+id/txtEmail"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
-            android:enabled="false"
-            android:hint="Archivo "
-            android:layout_toLeftOf="@+id/btnSelectFiles"
-            android:layout_toStartOf="@+id/btnSelectFiles" />
+            android:layout_toEndOf="@+id/buttonBold"
+            android:layout_marginLeft="10dp" />
 
         <Button
             style="?android:attr/buttonStyleSmall"
@@ -87,9 +53,105 @@
             android:layout_height="wrap_content"
             android:text="..."
             android:id="@+id/btnSelectFiles"
-            android:layout_below="@+id/txtEmail"
+            android:layout_below="@+id/txtThreadSubject"
             android:layout_alignParentRight="true"
             android:layout_alignParentEnd="true" />
+
+        <EditText
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textPersonName"
+            android:ems="10"
+            android:id="@+id/txtPosterName"
+            android:hint="@string/txt_postername"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:nextFocusDown="@+id/txtEmail"/>
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textPersonName"
+            android:ems="10"
+            android:id="@+id/txtThreadSubject"
+            android:hint="@string/txt_thread_subject"
+            android:layout_below="@+id/txtEmail"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:nextFocusDown="@+id/txtResponse"/>
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textCapSentences|textMultiLine"
+            android:ems="10"
+            android:id="@+id/txtResponse"
+            android:hint="@string/txt_response"
+            android:clickable="false"
+            android:capitalize="sentences"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:layout_below="@+id/buttonBold"
+            android:layout_marginTop="10dp" />
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/txtFilePath"
+            android:enabled="false"
+            android:hint="Archivo "
+            android:layout_gravity="center_horizontal"
+            android:layout_below="@+id/txtThreadSubject"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true" />
+
+        <Button
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:background="@drawable/ic_format_strikethrough"
+            android:id="@+id/buttonStrike"
+            android:layout_alignTop="@+id/buttonItalic"
+            android:layout_toRightOf="@+id/buttonItalic"
+            android:layout_toEndOf="@+id/buttonItalic"
+            android:layout_marginLeft="10dp" />
+
+        <Button
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:background="@drawable/ic_action_font_underline"
+            android:id="@+id/buttonUnderline"
+            android:layout_alignTop="@+id/buttonStrike"
+            android:layout_toRightOf="@+id/buttonStrike"
+            android:layout_toEndOf="@+id/buttonStrike"
+            android:layout_marginLeft="10dp"
+            android:allowUndo="false" />
+
+        <Button
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:id="@+id/buttonList"
+            android:background="@drawable/ic_action_list_2"
+            android:layout_alignTop="@+id/buttonUnderline"
+            android:layout_toRightOf="@+id/buttonUnderline"
+            android:layout_toEndOf="@+id/buttonUnderline"
+            android:layout_marginLeft="10dp" />
+
+        <Button
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:id="@+id/buttonCode"
+            android:background="@drawable/ic_code"
+            android:layout_alignTop="@+id/buttonList"
+            android:layout_toRightOf="@+id/buttonList"
+            android:layout_toEndOf="@+id/buttonList"
+            android:layout_marginLeft="10dp" />
 
     </RelativeLayout>
 
@@ -120,6 +182,7 @@
             android:layout_alignRight="@+id/relativeLayout"
             android:layout_alignEnd="@+id/relativeLayout"
             android:layout_marginTop="3dp" />
+
     </LinearLayout>
 
 </RelativeLayout>

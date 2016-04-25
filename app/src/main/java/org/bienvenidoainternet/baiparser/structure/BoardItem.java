@@ -3,6 +3,12 @@ package org.bienvenidoainternet.baiparser.structure;
 import android.graphics.Bitmap;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.util.Log;
+
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.parser.Tag;
 
 /**
  *   BaiApp - Bienvenido a internet Android Application
@@ -31,12 +37,13 @@ public class BoardItem implements Parcelable {
     private String message = "";
     private String subject = "";
     private String posterId = "";
-    private int parentid, id, idcolor, totalreplies = 0, totalfiles, thumb_height, thumb_weight, filesize, deleted_code, bbs_id = 1, parentPostCount;
+    public String youtubeURL = "", youtubeID = "";
+    private int parentid = 0, id = 0, idcolor, totalreplies = 0, totalfiles, thumb_height, thumb_weight, filesize, deleted_code, bbs_id = 1, parentPostCount;
     private long timestamp = 0;
 
     private Bitmap thumbBitmap = null;
     public boolean downloadingThumb = false;
-    public boolean isReply = false;
+    public boolean isReply = false, isLocked = false, youtubeLink = false;
     private Board parentBoard = null;
 
     protected BoardItem(Parcel in) {
@@ -49,6 +56,8 @@ public class BoardItem implements Parcelable {
         message = in.readString();
         subject = in.readString();
         posterId = in.readString();
+        youtubeURL = in.readString();
+        youtubeID = in.readString();
         parentid = in.readInt();
         id = in.readInt();
         idcolor = in.readInt();
@@ -64,6 +73,8 @@ public class BoardItem implements Parcelable {
         thumbBitmap = in.readParcelable(Bitmap.class.getClassLoader());
         downloadingThumb = in.readByte() != 0;
         isReply = in.readByte() != 0;
+        isLocked = in.readByte() != 0;
+        youtubeLink = in.readByte() != 0;
         parentBoard = in.readParcelable(Board.class.getClassLoader());
     }
 
@@ -124,12 +135,22 @@ public class BoardItem implements Parcelable {
     }
 
     public void setMessage(String message) {
-        // TODO: Dar formato a los mensajes de otra forma
-        this.message = message.replace("<span class=\"unkfunc\">", "<font color=#85c749><i>");
-        this.message = this.message.replace("</span>", "</i></font>");
-        if (this.message.contains("<hr")){
-            this.message = this.message.replace("<hr />", "<br><br><small><font color=#FF8800><i>") + "</i></small></font>";
+        Document msg = Jsoup.parse(message);
+        if (!msg.getElementsByClass("yt").isEmpty()){
+            Element you = msg.getElementsByClass("yt").first();
+            if (this.getFile().isEmpty()){
+                this.thumb = you.getElementsByTag("img").attr("src");
+                String[] parts = thumb.split("/");
+                this.youtubeLink = true;
+                this.youtubeURL = "https://www.youtube.com/watch?v=" + parts[4];
+                this.youtubeID = parts[4];
+                Log.v("ID", youtubeID);
+            }
         }
+        msg.select("img[src]").remove();
+        msg.select("span[class=unkfunc]").tagName("font").attr("color", "#8fb56c").wrap("<i></i>");
+        msg.select("div[class=yt]").wrap("<font color=red'><i></i></font>");
+        this.message = msg.html();
     }
 
     public String getName() {
@@ -288,6 +309,10 @@ public class BoardItem implements Parcelable {
         return this.email.equals("sage");
     }
 
+    public void setLockStatus(int i){
+        this.isLocked = i == 0 ? false : true;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -304,6 +329,8 @@ public class BoardItem implements Parcelable {
         dest.writeString(message);
         dest.writeString(subject);
         dest.writeString(posterId);
+        dest.writeString(youtubeURL);
+        dest.writeString(youtubeID);
         dest.writeInt(parentid);
         dest.writeInt(id);
         dest.writeInt(idcolor);
@@ -319,6 +346,8 @@ public class BoardItem implements Parcelable {
         dest.writeParcelable(thumbBitmap, flags);
         dest.writeByte((byte) (downloadingThumb ? 1 : 0));
         dest.writeByte((byte) (isReply ? 1 : 0));
+        dest.writeByte((byte) (isLocked ? 1 : 0));
+        dest.writeByte((byte) (youtubeLink ? 1 : 0));
         dest.writeParcelable(parentBoard, flags);
     }
 }

@@ -24,16 +24,28 @@ import android.os.Parcelable;
 public class Board implements Parcelable{
     private String boardName, boardDir;
     private int boardType;
-    public Board(String boardName,String boardDir,int boardType){
+
+    public boolean isCanAttachFiles() {
+        return canAttachFiles;
+    }
+
+    public void setCanAttachFiles(boolean canAttachFiles) {
+        this.canAttachFiles = canAttachFiles;
+    }
+
+    private boolean canAttachFiles;
+    public Board(String boardName, String boardDir, int boardType, boolean canAttachFiles){
         this.boardName = boardName;
         this.boardDir = boardDir;
         this.boardType = boardType;
+        this.canAttachFiles = canAttachFiles;
     }
 
     public Board(Parcel in){
         this.boardName = in.readString();
         this.boardDir = in.readString();
         this.boardType = in.readInt();
+        this.canAttachFiles = in.readByte() != 0;
     }
 
     public String getBoardDir() {
@@ -70,5 +82,6 @@ public class Board implements Parcelable{
         dest.writeString(boardName);
         dest.writeString(boardDir);
         dest.writeInt(boardType);
+        dest.writeByte((byte)(canAttachFiles ? 1 : 0));
     }
 }

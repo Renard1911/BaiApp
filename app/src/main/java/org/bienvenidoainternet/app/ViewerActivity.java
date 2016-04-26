@@ -1,4 +1,4 @@
-package org.bienvenidoainternet.baiparser;
+package org.bienvenidoainternet.app;
 
 import android.content.Context;
 import android.content.ContextWrapper;
@@ -14,7 +14,7 @@ import android.view.MenuItem;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
-import org.bienvenidoainternet.baiparser.structure.BoardItemFile;
+import org.bienvenidoainternet.app.structure.BoardItemFile;
 
 import java.io.File;
 import java.io.FileInputStream;

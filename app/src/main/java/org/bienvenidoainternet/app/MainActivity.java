@@ -1,4 +1,4 @@
-package org.bienvenidoainternet.baiparser;
+package org.bienvenidoainternet.app;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -14,7 +14,6 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.SubMenu;
@@ -24,13 +23,11 @@ import android.widget.HeaderViewListAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
 import com.koushikdutta.async.future.FutureCallback;
 import com.koushikdutta.ion.Ion;
 
-import org.bienvenidoainternet.baiparser.structure.Board;
-import org.bienvenidoainternet.baiparser.structure.BoardItem;
+import org.bienvenidoainternet.app.structure.Board;
+import org.bienvenidoainternet.app.structure.BoardItem;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -447,10 +444,6 @@ public class MainActivity extends AppCompatActivity
                         }
                     }
                 });
-
-        Board parsedBoard = new Board("Testing Field", "polka", 1, true);
-        sub.add(parsedBoard.getBoardName());
-        boardList.add(parsedBoard);
         refreshNavigator();
     }
 

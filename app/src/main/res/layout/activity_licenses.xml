@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="org.bienvenidoainternet.baiparser.LicensesActivity">
+    tools:context="org.bienvenidoainternet.app.LicensesActivity">
 
     <WebView
         android:layout_width="match_parent"

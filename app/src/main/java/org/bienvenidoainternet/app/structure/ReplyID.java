@@ -1,7 +1,12 @@
-package org.bienvenidoainternet.baiparser.structure;
+package org.bienvenidoainternet.app.structure;
 
+import android.graphics.Color;
 import android.os.Parcel;
 import android.os.Parcelable;
+
+import org.bienvenidoainternet.app.ThemeManager;
+
+import java.util.Random;
 
 /**
  *   BaiApp - Bienvenido a internet Android Application
@@ -20,32 +25,33 @@ import android.os.Parcelable;
  *   You should have received a copy of the GNU General Public License
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-public class BoardItemFile implements Parcelable{
-    public String file;
-    public String fileURL;
-    public String boardDir;
-
-    public BoardItemFile(String fileURL, String file, String boardDir){
-        this.fileURL = fileURL;
-        this.file = file;
-        this.boardDir = boardDir;
+public class ReplyID implements Parcelable{
+    public String id;
+    public int color;
+    public ReplyID(String id, ThemeManager tm){
+        this.id = id;
+        Random r = new Random();
+        if (tm.isDarkTheme()){
+            this.color = Color.rgb(r.nextInt(125) + 127, r.nextInt(127) + 127, r.nextInt(127) + 127);
+        }else{
+            this.color = Color.rgb(r.nextInt(125), r.nextInt(127), r.nextInt(127));
+        }
     }
 
-    protected BoardItemFile(Parcel in) {
-        file = in.readString();
-        fileURL = in.readString();
-        boardDir = in.readString();
+    protected ReplyID(Parcel in) {
+        id = in.readString();
+        color = in.readInt();
     }
 
-    public static final Creator<BoardItemFile> CREATOR = new Creator<BoardItemFile>() {
+    public static final Creator<ReplyID> CREATOR = new Creator<ReplyID>() {
         @Override
-        public BoardItemFile createFromParcel(Parcel in) {
-            return new BoardItemFile(in);
+        public ReplyID createFromParcel(Parcel in) {
+            return new ReplyID(in);
         }
 
         @Override
-        public BoardItemFile[] newArray(int size) {
-            return new BoardItemFile[size];
+        public ReplyID[] newArray(int size) {
+            return new ReplyID[size];
         }
     };
 
@@ -56,8 +62,7 @@ public class BoardItemFile implements Parcelable{
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(file);
-        dest.writeString(fileURL);
-        dest.writeString(boardDir);
+        dest.writeString(id);
+        dest.writeInt(color);
     }
 }

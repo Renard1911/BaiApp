@@ -1,4 +1,4 @@
-package org.bienvenidoainternet.baiparser;
+package org.bienvenidoainternet.app;
 
 import android.content.Context;
 import android.text.Html;
@@ -8,7 +8,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
-import org.bienvenidoainternet.baiparser.structure.BoardItem;
+import org.bienvenidoainternet.app.structure.BoardItem;
 
 import java.util.ArrayList;
 import java.util.Collections;

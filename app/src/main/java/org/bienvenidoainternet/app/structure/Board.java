@@ -1,4 +1,4 @@
-package org.bienvenidoainternet.baiparser.structure;
+package org.bienvenidoainternet.app.structure;
 
 import android.os.Parcel;
 import android.os.Parcelable;

@@ -1,4 +1,4 @@
-package org.bienvenidoainternet.baiparser;
+package org.bienvenidoainternet.app;
 
 import android.content.Context;
 import android.content.Intent;
@@ -23,8 +23,8 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import org.bienvenidoainternet.baiparser.structure.BoardItem;
-import org.bienvenidoainternet.baiparser.structure.BoardItemFile;
+import org.bienvenidoainternet.app.structure.BoardItem;
+import org.bienvenidoainternet.app.structure.BoardItemFile;
 
 import java.util.ArrayList;
 import java.util.Collections;

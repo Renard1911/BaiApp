@@ -1,4 +1,4 @@
-package org.bienvenidoainternet.baiparser;
+package org.bienvenidoainternet.app;
 
 import android.app.Activity;
 import android.content.SharedPreferences;

@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
 
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context="org.bienvenidoainternet.baiparser.MainActivity"
+    tools:context="org.bienvenidoainternet.app.MainActivity"
     tools:showIn="@layout/app_bar_main">
     <android.support.v4.view.ViewPager
         android:id="@+id/pager"

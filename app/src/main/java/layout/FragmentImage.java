@@ -19,9 +19,9 @@ import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView;
 import com.koushikdutta.async.future.FutureCallback;
 import com.koushikdutta.ion.Ion;
 
-import org.bienvenidoainternet.baiparser.R;
-import org.bienvenidoainternet.baiparser.ViewerActivity;
-import org.bienvenidoainternet.baiparser.structure.BoardItemFile;
+import org.bienvenidoainternet.app.R;
+import org.bienvenidoainternet.app.ViewerActivity;
+import org.bienvenidoainternet.app.structure.BoardItemFile;
 
 import java.io.File;
 import java.io.FileOutputStream;

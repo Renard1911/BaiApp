@@ -1,4 +1,4 @@
-package org.bienvenidoainternet.baiparser;
+package org.bienvenidoainternet.app;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -21,9 +21,7 @@ import android.widget.Toast;
 import com.koushikdutta.async.future.FutureCallback;
 import com.koushikdutta.ion.Ion;
 
-import org.bienvenidoainternet.baiparser.structure.Board;
-import org.bienvenidoainternet.baiparser.structure.BoardItem;
-import org.w3c.dom.Document;
+import org.bienvenidoainternet.app.structure.BoardItem;
 
 import java.io.File;
 

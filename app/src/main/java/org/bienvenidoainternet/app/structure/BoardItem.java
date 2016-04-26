@@ -1,4 +1,4 @@
-package org.bienvenidoainternet.baiparser.structure;
+package org.bienvenidoainternet.app.structure;
 
 import android.graphics.Bitmap;
 import android.os.Parcel;
@@ -8,7 +8,6 @@ import android.util.Log;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
-import org.jsoup.parser.Tag;
 
 /**
  *   BaiApp - Bienvenido a internet Android Application

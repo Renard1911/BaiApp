@@ -172,7 +172,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
      * activity is showing a two-pane settings UI.
      */
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
-    public class GeneralPreferenceFragment extends PreferenceFragment {
+    public static class GeneralPreferenceFragment extends PreferenceFragment {
         @Override
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
@@ -192,10 +192,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             int id = item.getItemId();
             if (id == android.R.id.home) {
 //                startActivity(new Intent(getActivity(), SettingsActivity.class));
-                Intent returnIntent = new Intent();
-                returnIntent.putExtra("result",requireReset);
-                setResult(Activity.RESULT_OK,returnIntent);
-                finish();
+                getActivity().onBackPressed();
                 return true;
             }
             return super.onOptionsItemSelected(item);

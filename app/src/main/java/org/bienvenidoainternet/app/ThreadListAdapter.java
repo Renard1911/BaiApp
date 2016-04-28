@@ -314,7 +314,7 @@ public class ThreadListAdapter extends ArrayAdapter<BoardItem>{
                     if (link.length != 0) {
                         if (link[0] instanceof URLSpan){
                             URLSpan uspan = (URLSpan) link[0];
-                            if (uspan.getURL().contains("/read/") && !uspan.getURL().contains("http")){
+                            if ((uspan.getURL().contains("/read/") || uspan.getURL().contains("/res/")) && !uspan.getURL().contains("http")){
                                 String url = uspan.getURL();
                                 String[] parts = url.split("/");
                                 if (parts.length == 4 && listThreads){

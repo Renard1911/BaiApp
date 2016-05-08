@@ -29,6 +29,10 @@
             android:key="setting_downloadOnlyWithWifi"
             android:defaultValue="true" />
         <SwitchPreference
+            android:title="Utilizar miniaturas de versión movil"
+            android:key="pref_usemobilethumbs"
+            android:defaultValue="true"/>
+        <SwitchPreference
             android:title="Ir al final al abrir un hilo"
             android:key="setting_scrollatnewthread"
             android:defaultValue="false" />

@@ -137,4 +137,9 @@ public class ThemeManager {
     public int getCurrentThemeId() {
         return currentThemeId;
     }
+
+    public int getQuoteColor() {
+        TypedArray a = activity.getTheme().obtainStyledAttributes(currentThemeId, new int[]{R.attr.quoteColor});
+        return a.getColor(0, Color.CYAN);
+    }
 }

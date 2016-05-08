@@ -113,10 +113,12 @@ public class ThreadListAdapter extends ArrayAdapter<BoardItem>{
         int sageColor = tm.getSageColor();
         int nameColor = tm.getNameColor();
         int tripcodeColor = tm.getTripcodeColor();
+        int quoteColor = tm.getQuoteColor();
         String hexColor =intToHexString(boardItem.getIdColor());
         String sageHexColor = intToHexString(sageColor);
         String nameHexColor = intToHexString(nameColor);
         String tripcodeHexColor = intToHexString(tripcodeColor);
+        String quoteHexColor = intToHexString(quoteColor);
         String strId = "";
 
         TextView txtTitle = (TextView)listItemView.findViewById(R.id.lv_txtTitle);
@@ -251,7 +253,8 @@ public class ThreadListAdapter extends ArrayAdapter<BoardItem>{
 
         txtPoster.setText(Html.fromHtml("<b>No. " + idToDisplay + "</b> por <font color=" + (boardItem.isSage() ? sageHexColor : nameHexColor) + ">" + boardItem.getName() + "</font> "
                 + (boardItem.getTripcode() == "" ? "" : "<font color=" + tripcodeHexColor + ">" + boardItem.getTripcode() + "</font>") + strId + " " + strTimeDiff));
-        txtBody.setText(Html.fromHtml(boardItem.getMessage()));
+        String fixedMessage = boardItem.getMessage().replace("$_QUOTECOLOR_$", quoteHexColor);
+        txtBody.setText(Html.fromHtml(fixedMessage));
 
         txtReplies.setVisibility(boardItem.isReply ? View.GONE : View.VISIBLE);
         txtReplies.setText(boardItem.getTotalReplies() + " respuestas " + (boardItem.getTotalFiles() == 0 ? "" : ", " + boardItem.getTotalFiles() + " archivos"));

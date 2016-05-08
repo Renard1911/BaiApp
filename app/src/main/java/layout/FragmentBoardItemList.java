@@ -23,6 +23,7 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.LinearLayout;
@@ -46,6 +47,8 @@ import org.bienvenidoainternet.app.structure.ReplyID;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -192,12 +195,13 @@ public class FragmentBoardItemList extends Fragment {
                 if (imMainFragment && !recentPostMode) {
                     BoardItem bi = listViewAdapter.getItem(position);
                     mListener.showThread(currentBoard, bi);
-                }else if (imMainFragment && recentPostMode){
+                } else if (imMainFragment && recentPostMode) {
                     BoardItem bi = boardItems.get(position);
                     mListener.showThread(bi.getParentBoard(), bi);
                 }
             }
         });
+
 
         listViewBoardItems.setOnScrollListener(new AbsListView.OnScrollListener() {
             private int lastFirstVisibleItem = 0;
@@ -209,9 +213,11 @@ public class FragmentBoardItemList extends Fragment {
             @Override
             public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
                 if(lastFirstVisibleItem < firstVisibleItem) { // Scrolling down
-                        mListener.hideActionButton();
+                    mListener.hideActionButton();
+//                    ((MainActivity)getActivity()).getSupportActionBar().hide();
                 }else  if(lastFirstVisibleItem > firstVisibleItem) { // Scrolling Up
-                        mListener.showActionButton();
+                    mListener.showActionButton();
+//                    ((MainActivity)getActivity()).getSupportActionBar().show();
                 }
                 lastFirstVisibleItem = firstVisibleItem;
                 for (int i = firstVisibleItem; i < firstVisibleItem + visibleItemCount; i++) {
@@ -226,7 +232,8 @@ public class FragmentBoardItemList extends Fragment {
                     loadingMoreThreads = true;
                     currentOffset += 10;
                     System.out.println("[Scroll] loading more threads! currentThreadCount " + totalItemCount);
-                    getThreadList(currentOffset); // TODO: Offset incorrecto
+                    getThreadList(currentOffset);
+//                    Toast.makeText(getActivity().getApplicationContext(), "Cargando más hilos ...", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -315,11 +322,12 @@ public class FragmentBoardItemList extends Fragment {
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
         if (info.targetView.getParent() == listViewBoardItems){
             BoardItem bi = boardItems.get(info.position);
+            Document doc = Jsoup.parse(bi.getMessage());
+            String parsedMessage = doc.text();
             switch (item.getItemId()){
                 case R.id.menu_copy:
-                    System.out.println("Post copiado");
                     ClipboardManager cm = (ClipboardManager)getActivity().getSystemService(Context.CLIPBOARD_SERVICE);
-                    ClipData cd = ClipData.newPlainText("Reply", boardItems.get(info.position).getMessage());
+                    ClipData cd = ClipData.newPlainText("Reply", parsedMessage);
                     cm.setPrimaryClip(cd);
                     break;
                 case R.id.menu_reply:
@@ -335,7 +343,7 @@ public class FragmentBoardItemList extends Fragment {
                         File txt = new File(Environment.getExternalStorageDirectory().getPath() + "/Bai/" + bi.getParentBoard().getBoardDir() + "_" + bi.getId() + ".txt");
                         FileOutputStream stream = new FileOutputStream(txt);
                         OutputStreamWriter outputStreamWriter = new OutputStreamWriter(stream);
-                        outputStreamWriter.write(bi.getMessage());
+                        outputStreamWriter.write(parsedMessage);
                         outputStreamWriter.close();
                         stream.close();
                         Toast.makeText(getContext(), bi.getParentBoard().getBoardDir() + "_" + bi.getId() + ".txt guardado.", Toast.LENGTH_SHORT).show();
@@ -431,6 +439,7 @@ public class FragmentBoardItemList extends Fragment {
         loadingMoreThreads = true;
         showProgressBar();
         String strOffset = "";
+
         if (offset == 0){
             currentOffset = 0;
             boardItems.clear();
@@ -449,6 +458,7 @@ public class FragmentBoardItemList extends Fragment {
                     @Override
                     public void onCompleted(Exception e, String result) {
                         hideProgressBar();
+                        int threadCount = 0;
                         if (e != null) {
                             e.printStackTrace();
                             displayError(e.getMessage());
@@ -456,6 +466,7 @@ public class FragmentBoardItemList extends Fragment {
                             try {
                                 JSONObject json = new JSONObject(result);
                                 JSONArray threads = json.getJSONArray("threads");
+                                threadCount = threads.length();
                                 for (int i = 0; i < threads.length(); i++) {
                                     JSONObject thread = threads.getJSONObject(i);
                                     BoardItem item = new BoardItem();
@@ -536,7 +547,9 @@ public class FragmentBoardItemList extends Fragment {
                         listViewAdapter.notifyDataSetChanged();
                         listViewAdapter.updateBoardItems(boardItems);
                         mListener.onThreadList();
-                        loadingMoreThreads = false;
+                        if (threadCount != 0){
+                            loadingMoreThreads = false;
+                        }
                         if (boardItems.isEmpty()){
                             mListener.updateToolbar(currentBoard, currentThread);
                         }
@@ -717,7 +730,8 @@ public class FragmentBoardItemList extends Fragment {
         if (mypath.exists()){
             try {
                 Bitmap b = BitmapFactory.decodeStream(new FileInputStream(mypath));
-                bi.setThumbBitmap(Bitmap.createScaledBitmap(b, 128, 128, false));
+//                bi.setThumbBitmap(Bitmap.createScaledBitmap(b, 128, 128, false));
+                bi.setThumbBitmap(b);
                 listViewAdapter.notifyDataSetChanged();
                 Log.i("getThumb", bi.getThumb() + " from cache");
                 return;
@@ -730,7 +744,8 @@ public class FragmentBoardItemList extends Fragment {
             Log.i("getThumb", "Not using wifi");
             return;
         }
-        String imgURL = "http://bienvenidoainternet.org/" + bi.getParentBoard().getBoardDir() + "/thumb/" + bi.getThumb();
+        boolean mobileThumbs = settings.getBoolean("pref_usemobilethumbs", true);
+        String imgURL = "http://bienvenidoainternet.org/" + bi.getParentBoard().getBoardDir() + (mobileThumbs ? "/mobile/" : "/thumb/") + bi.getThumb();
         if (bi.getThumb().startsWith("http")){
             imgURL = bi.getThumb();
         }
@@ -745,7 +760,7 @@ public class FragmentBoardItemList extends Fragment {
                             displayError(e.getMessage());
                             e.printStackTrace();
                         }else{
-                            bi.setThumbBitmap(Bitmap.createScaledBitmap(result, 128, 128, false));
+                            bi.setThumbBitmap(result);//Bitmap.createScaledBitmap(result, 128, 128, false));
                             listViewAdapter.notifyDataSetChanged();
                             FileOutputStream out;
                             try{

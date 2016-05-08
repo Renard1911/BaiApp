@@ -17,6 +17,7 @@
         <item name="marginColor">@color/defaultMarginColor</item>
         <item name="tripcodeColor">@color/defaultTripcodeColor</item>
         <item name="isDarkTheme">false</item>
+        <item name="quoteColor">@color/defaultQuote</item>
     </style>
 
     <style name="AppTheme.Dark" parent="AppTheme.NoActionBar">
@@ -29,6 +30,7 @@
         <item name="marginColor">@color/nightMarginColor</item>
         <item name="tripcodeColor">@color/nightTripcodeColor</item>
         <item name="isDarkTheme">true</item>
+        <item name="quoteColor">@color/nightQuote</item>
     </style>
 
     <style name="AppTheme.HeadLineActionBar.NoActionBar" parent="AppTheme.HeadLineActionBar">
@@ -56,6 +58,7 @@
         <item name="colorPrimaryDark">@color/headlineLinkColor</item>
         <item name="colorAccent">@color/headlineLinkColor</item>
         <item name="isDarkTheme">false</item>
+        <item name="quoteColor">@color/headlineQuote</item>
     </style>
 
     <style name="AppTheme.BlackActionBar.NoActionBar" parent="AppTheme.BlackActionBar">
@@ -83,6 +86,7 @@
         <item name="colorPrimaryDark">@color/blackMarginColor</item>
         <item name="colorAccent">@color/blackSageColor</item>
         <item name="isDarkTheme">true</item>
+        <item name="quoteColor">@color/blackQuote</item>
     </style>
 
     <style name="AppTheme.NoActionBar">
@@ -93,6 +97,5 @@
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
-
 
 </resources>

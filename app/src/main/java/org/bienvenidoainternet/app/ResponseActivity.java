@@ -113,6 +113,14 @@ public class ResponseActivity extends AppCompatActivity {
         Button bItalic = (Button) findViewById(R.id.buttonItalic);
         Button select = (Button) findViewById(R.id.btnSelectFiles);
 
+        bBold.setVisibility(View.GONE);
+        bStrike.setVisibility(View.GONE);
+        bList.setVisibility(View.GONE);
+        bCode.setVisibility(View.GONE);
+        bUnder.setVisibility(View.GONE);
+        bItalic.setVisibility(View.GONE);
+
+
         bBold.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

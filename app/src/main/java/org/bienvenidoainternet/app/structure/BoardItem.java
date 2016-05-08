@@ -5,6 +5,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
 
+import org.bienvenidoainternet.app.ThemeManager;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -147,7 +148,7 @@ public class BoardItem implements Parcelable {
             }
         }
         msg.select("img[src]").remove();
-        msg.select("span[class=unkfunc]").tagName("font").attr("color", "#8fb56c").wrap("<i></i>");
+        msg.select("span[class=unkfunc]").tagName("font").attr("color", "$_QUOTECOLOR_$").wrap("<i></i>");
         msg.select("div[class=yt]").wrap("<font color=red'><i></i></font>");
         this.message = msg.html();
     }

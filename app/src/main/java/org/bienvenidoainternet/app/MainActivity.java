@@ -14,10 +14,12 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.SubMenu;
 import android.view.View;
+import android.view.Window;
 import android.widget.BaseAdapter;
 import android.widget.HeaderViewListAdapter;
 import android.widget.ListView;
@@ -93,7 +95,9 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        getWindow().requestFeature(Window.FEATURE_ACTION_BAR_OVERLAY);
         super.onCreate(savedInstanceState);
+        Ion.getDefault(getApplicationContext()).configure().setLogging("IonLog", Log.DEBUG);
         ThemeManager tm = new ThemeManager(this);
         this.setTheme(tm.getThemeForMainActivity());
 
@@ -231,7 +235,7 @@ public class MainActivity extends AppCompatActivity
         }
 
         if (tm.isDarkTheme()){
-            navigationView.setBackgroundColor(0xFF888888);
+//            navigationView.setBackgroundColor(0xFF888888);
         }
     }
 
@@ -437,6 +441,10 @@ public class MainActivity extends AppCompatActivity
                                     sub.add(parsedBoard.getBoardName());
                                     boardList.add(parsedBoard);
                                 }
+//                                Board polka = new Board("Testing", "polka", 0, true);
+//                                boardList.add(polka);
+//                                sub.add("Testing");
+
                             }catch (JSONException e1) {
                                 Toast.makeText(getApplicationContext(), e1.getMessage(), Toast.LENGTH_LONG).show();
                                 e1.printStackTrace();

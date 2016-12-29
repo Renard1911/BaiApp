@@ -145,7 +145,7 @@ public class ThreadListAdapter extends ArrayAdapter<BoardItem>{
                         if (boardItem.youtubeLink){
                             in = new Intent(Intent.ACTION_VIEW, Uri.parse(boardItem.youtubeURL));
                         }else{
-                            in = new Intent(Intent.ACTION_VIEW, Uri.parse("http://bienvenidoainternet.org/" + boardItem.getParentBoard().getBoardDir() + "/src/" + boardItem.getFile()));
+                            in = new Intent(Intent.ACTION_VIEW, Uri.parse("https://bienvenidoainternet.org/" + boardItem.getParentBoard().getBoardDir() + "/src/" + boardItem.getFile()));
                         }
                         in.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                         v.getContext().startActivity(in);

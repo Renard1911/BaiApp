@@ -235,7 +235,7 @@ public class ResponseActivity extends AppCompatActivity {
         if (newthread){
             if (selectedFile.isEmpty()){
                 Ion.with(getApplicationContext())
-                        .load("http://bienvenidoainternet.org/cgi/post")
+                        .load("https://bienvenidoainternet.org/cgi/post")
                         .setLogging("posting", Log.VERBOSE)
                         .uploadProgressBar(progess)
                         .setMultipartParameter("board", theReply.getParentBoard().getBoardDir())
@@ -269,7 +269,7 @@ public class ResponseActivity extends AppCompatActivity {
                         });
             }else{
                 Ion.with(getApplicationContext())
-                        .load("http://bienvenidoainternet.org/cgi/post")
+                        .load("https://bienvenidoainternet.org/cgi/post")
                         .uploadProgressBar(progess)
                         .setMultipartParameter("board", theReply.getParentBoard().getBoardDir())
                         .setMultipartParameter("password", password)
@@ -304,7 +304,7 @@ public class ResponseActivity extends AppCompatActivity {
         }else{
             if (selectedFile.isEmpty()){
                 Ion.with(getApplicationContext())
-                        .load("http://bienvenidoainternet.org/cgi/post")
+                        .load("https://bienvenidoainternet.org/cgi/post")
                         .setLogging("posting", Log.VERBOSE)
                         .uploadProgressBar(progess)
                         .setMultipartParameter("board", theReply.getParentBoard().getBoardDir())
@@ -338,7 +338,7 @@ public class ResponseActivity extends AppCompatActivity {
                         });
             }else{
                 Ion.with(getApplicationContext())
-                        .load("http://bienvenidoainternet.org/cgi/post")
+                        .load("https://bienvenidoainternet.org/cgi/post")
                         .uploadProgressBar(progess)
                         .setMultipartParameter("board", theReply.getParentBoard().getBoardDir())
                         .setMultipartParameter("parent", String.valueOf(parentId))

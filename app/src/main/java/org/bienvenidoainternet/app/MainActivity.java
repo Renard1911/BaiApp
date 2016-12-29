@@ -234,9 +234,6 @@ public class MainActivity extends AppCompatActivity
             refreshNavigator();
         }
 
-        if (tm.isDarkTheme()){
-//            navigationView.setBackgroundColor(0xFF888888);
-        }
     }
 
 
@@ -424,7 +421,7 @@ public class MainActivity extends AppCompatActivity
         Menu menu = navigationView.getMenu();
         final SubMenu sub = menu.addSubMenu("Lista de Boards");
         Ion.with(getApplicationContext())
-                .load("http://bienvenidoainternet.org/cgi/api/boards")
+                .load("https://bienvenidoainternet.org/cgi/api/boards")
                 .asString()
                 .setCallback(new FutureCallback<String>() {
                     @Override
@@ -441,10 +438,9 @@ public class MainActivity extends AppCompatActivity
                                     sub.add(parsedBoard.getBoardName());
                                     boardList.add(parsedBoard);
                                 }
-//                                Board polka = new Board("Testing", "polka", 0, true);
+//                                Board polka = new Board("TESTING", "polka", 0, true);
+//                                sub.add(polka.getBoardName());
 //                                boardList.add(polka);
-//                                sub.add("Testing");
-
                             }catch (JSONException e1) {
                                 Toast.makeText(getApplicationContext(), e1.getMessage(), Toast.LENGTH_LONG).show();
                                 e1.printStackTrace();
